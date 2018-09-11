@@ -2,7 +2,7 @@
 var mockNames = ['Чесночные сливки', 'Огуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие', 'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка', 'Корманный портвейн', 'Чилийский задира', 'Беконовый взрыв', 'Арахис vs виноград', 'Сельдерейная душа', 'Початок в бутылке', 'Чернющий мистер чеснок', 'Раша федераша', 'Кислая мина', 'Кукурузное утро', 'Икорный фуршет', 'Новогоднее настроение', 'С пивком потянет', 'Мисс креветка', 'Бесконечный взрыв', 'Невинные винные', 'Бельгийское пенное', 'Острый язычок'];
 var mockPictures = ['gum-cedar.jpg', 'gum-chile.jpg', 'gum-eggplant.jpg', 'gum-mustard.jpg', 'gum-portwine.jpg', 'gum-wasabi.jpg', 'ice-cucumber.jpg', 'ice-eggplant.jpg', 'ice-garlic.jpg', 'ice-italian.jpg', 'ice-mushroom.jpg', 'ice-pig.jpg', 'marmalade-beer.jpg', 'marmalade-caviar.jpg', 'marmalade-corn.jpg', 'marmalade-new-year.jpg', 'marmalade-sour.jpg', 'marshmallow-bacon.jpg', 'marshmallow-beer.jpg', 'marshmallow-shrimp.jpg', 'marshmallow-spicy.jpg', 'marshmallow-wine.jpg', 'soda-bacon.jpg', 'soda-celery.jpg', 'soda-cob.jpg', 'soda-garlic.jpg', 'soda-peanut-grapes.jpg',
   'soda-russian.jpg'];
-var MockContents = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца', 'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор', 'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит', 'карбамид', 'вилларибо', 'виллабаджо'];
+var mockContents = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца', 'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор', 'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит', 'карбамид', 'вилларибо', 'виллабаджо'];
 var starsRatingStyles = ['stars__rating--one', 'stars__rating--two', 'stars__rating--three', 'stars__rating--four', 'stars__rating--five'];
 var GOODS_NUMBER = 26;
 var GOODS_NUMBER_BASKET = 3;
@@ -36,11 +36,11 @@ var getRandomBoolean = function () {
 };
 
 var getRandomContents = function () {
-  var numberOfСomponents = getRandomValue(1, MockContents.length);
+  var numberOfСomponents = getRandomValue(1, mockContents.length);
   var contents = [];
   var element;
   for (var i = 0; i < numberOfСomponents; i++) {
-    element = getRandomElement(MockContents);
+    element = getRandomElement(mockContents);
     if (contents.indexOf(element) === -1) {
       contents.push(element);
     }
@@ -50,20 +50,20 @@ var getRandomContents = function () {
 
 // функция генерации объекта-товара
 var getMockElement = function () {
-  var mokElement = {};
-  mokElement.name = getRandomElement(mockNames);
-  mokElement.picture = 'img/cards/' + getRandomElement(mockPictures);
-  mokElement.amount = getRandomValue(AMOUNT_MIN, AMOUNT_MAX);
-  mokElement.price = getRandomValue(PRICE_MIN, PRICE_MAX);
-  mokElement.weight = getRandomValue(WEIGHT_MIN, WEIGHT_MAX);
-  mokElement.rating = {};
-  mokElement.rating.value = getRandomValue(RATING_MIN, RATING_MAX);
-  mokElement.rating.number = getRandomValue(RATING_NUMBER_MIN, RATING_NUMBER_MAX);
-  mokElement.nutritionFacts = {};
-  mokElement.nutritionFacts.sugar = getRandomBoolean();
-  mokElement.nutritionFacts.energy = getRandomValue(ENERGY_MIN, ENERGY_MAX);
-  mokElement.nutritionFacts.contents = getRandomContents();
-  return mokElement;
+  var mockElement = {};
+  mockElement.name = getRandomElement(mockNames);
+  mockElement.picture = 'img/cards/' + getRandomElement(mockPictures);
+  mockElement.amount = getRandomValue(AMOUNT_MIN, AMOUNT_MAX);
+  mockElement.price = getRandomValue(PRICE_MIN, PRICE_MAX);
+  mockElement.weight = getRandomValue(WEIGHT_MIN, WEIGHT_MAX);
+  mockElement.rating = {};
+  mockElement.rating.value = getRandomValue(RATING_MIN, RATING_MAX);
+  mockElement.rating.number = getRandomValue(RATING_NUMBER_MIN, RATING_NUMBER_MAX);
+  mockElement.nutritionFacts = {};
+  mockElement.nutritionFacts.sugar = getRandomBoolean();
+  mockElement.nutritionFacts.energy = getRandomValue(ENERGY_MIN, ENERGY_MAX);
+  mockElement.nutritionFacts.contents = getRandomContents();
+  return mockElement;
 };
 
 // функция создания массива данных
