@@ -35,6 +35,7 @@ var getRandomBoolean = function () {
   return Math.round(Math.random()) ? true : false;
 };
 
+// функция генерации составляющих продукта
 var getRandomContents = function () {
   var numberOfСomponents = getRandomValue(1, mockContents.length);
   var contents = [];
@@ -124,34 +125,3 @@ var renderCard = function (cardData, list) {
   list.appendChild(card);
   // catalogCards.appendChild(card);
 };
-
-// найдем блок catalog__cards и уберем у него класс catalog__cards--load
-var catalogCards = document.querySelector('.catalog__cards');
-catalogCards.classList.remove('catalog__cards--load');
-
-// найдем блок catalog__load и скроем его, добавив класс visually-hidden
-var catalogLoad = document.querySelector('.catalog__load');
-catalogLoad.classList.add('visually-hidden');
-
-// наполним каталог: создадим данные, контейнер для отрисовки в него карточек, отрисуем в него карточки и вставим контейнер в каталог
-var goods = getMockGoods(GOODS_NUMBER);
-var fragmentCatalog = document.createDocumentFragment();
-for (var i = 0; i < goods.length; i++) {
-  renderCard(goods[i], fragmentCatalog);
-}
-catalogCards.appendChild(fragmentCatalog);
-
-// наполним корзину: создадим данные, контейнер, для отрисовки в него карточек, отрисуем в него карточки и вставим контейнер в корзину
-var goodsInBusket = getMockGoods(GOODS_NUMBER_BASKET);
-var fragmentBasket = document.createDocumentFragment();
-var goodsCards = document.querySelector('.goods__cards');
-for (i = 0; i < goodsInBusket.length; i++) {
-  renderCard(goodsInBusket[i], fragmentBasket);
-}
-goodsCards.appendChild(fragmentBasket);
-
-// удалим у блока товары в корзине goods__cards класс goods__cards--empty
-goodsCards.classList.remove('goods__cards--empty');
-
-// скроем блок goods__card-empty добавив ему класс visually-hidden
-document.querySelector('.goods__card-empty').classList.add('visually-hidden');
