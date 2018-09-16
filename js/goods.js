@@ -4,8 +4,8 @@ var mockPictures = ['gum-cedar.jpg', 'gum-chile.jpg', 'gum-eggplant.jpg', 'gum-m
   'soda-russian.jpg'];
 var mockContents = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца', 'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор', 'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит', 'карбамид', 'вилларибо', 'виллабаджо'];
 var starsRatingStyles = ['stars__rating--one', 'stars__rating--two', 'stars__rating--three', 'stars__rating--four', 'stars__rating--five'];
-var GOODS_NUMBER = 26;
-var GOODS_NUMBER_BASKET = 3;
+var GOODS_NUMBER = 10;
+var GOODS_NUMBER_BASKET = 0;
 var AMOUNT_MIN = 0;
 var AMOUNT_MAX = 20;
 var PRICE_MIN = 100;
@@ -76,8 +76,8 @@ var getMockGoods = function (number) {
   return mockGoods;
 };
 
-// функция отрисовки карточки товара по шаблону, передаем в нее данные о товаре в виде объекта и указатель на список куда отрисовывать карточку
-var renderCard = function (cardData, list) {
+// функция отрисовки карточки товара в каталоге. передаем в нее id для карточки, объект с данными и контейнер куда рисовать;
+var renderCard = function (id, cardData, list) {
   // находим и сохраняем шаблон
   var cardTemplate = document.querySelector('#card').content.cloneNode(true);
 
@@ -87,6 +87,10 @@ var renderCard = function (cardData, list) {
   // добавим фото товара
   card.querySelector('.card__img').src = cardData.picture;
 
+  // добавим карточке id
+  // var cardId = '#' + id;
+  // card.classList.add(cardId);
+  card.setAttribute('id', id);
   // добавим карточке товара класс доступности в зависимости от количества
   card.classList.remove('card--in-stock');
   switch (cardData.amount) {
@@ -121,7 +125,92 @@ var renderCard = function (cardData, list) {
   // оформим блок состав товара card__composition-list, добавим данные о содержащихся элементах
   card.querySelector('.card__composition-list').textContent = cardData.nutritionFacts.contents;
 
+  // добавим обработчик на кнопку "добавить в корзину"
+  var btnToChart = card.querySelector('.card__btn');
+  btnToChart.addEventListener('click', onBtnToChart);
+
+  // добавим обработчик на кнопку "в избранное"
+  var btnToFavorite = card.querySelector('.card__btn-favorite');
+  btnToFavorite.addEventListener('click', onBtnToFavorite);
+
+  // добавим обработчик клика на карточку товара
+  card.addEventListener('click', onCardClick);
+
   // добавим сформированную карточку в контейнер
   list.appendChild(card);
   // catalogCards.appendChild(card);
 };
+
+// обработчик клика по кнопке в корзину
+var onBtnToChart = function () {
+  // console.log('В КОРЗИНУ');
+};
+
+// обработчик клика по кнопке избранное
+var onBtnToFavorite = function () {
+  // console.log('В ИЗБРАННОЕ');
+};
+
+// обработчик кликов для карточки
+var onCardClick = function (evt) {
+  // сохраним кнопки карточки и саму карточку в переменные
+  var currentCard = evt.currentTarget;
+  var btnFavorite = currentCard.querySelector('.card__btn-favorite');
+  var btnChart = currentCard.querySelector('.card__btn');
+  // сохраним id карточки
+  var id = currentCard.getAttribute('id');
+  // сохраним шаблон карточки в корзине
+  // var cardInBusket = document.querySelector('#card-order').content.cloneNode(true);
+  if (evt.target === btnChart) {
+    // обработаем клик по кнопке в корзину
+    var newCard = renderCardInBusket(goods[id], id);
+    goodsCards.appendChild(newCard);
+  }
+  if (evt.target === btnFavorite) {
+    // обработаем клик по кнопке в избранное
+  }
+};
+
+// функция отрисовки карточки в корзине, передадим в нее данные для отрисовки в виде объекта, а она вернет отрисованный элемент
+var renderCardInBusket = function (cardData, id) {
+  var card = document.querySelector('#card-order').content.cloneNode(true);
+  // card.setAttribute('id', id);
+  card.querySelector('.card-order__title').textContent = cardData.name;
+  card.querySelector('.card-order__img').src = cardData.picture;
+  card.querySelector('.card-order__img').alt = cardData.name;
+  card.querySelector('.card-order__price').textContent = cardData.price;
+  card.querySelector('.card-order__count').value = 1;
+  return card;
+};
+
+// найдем блок catalog__cards и уберем у него класс catalog__cards--load
+var catalogCards = document.querySelector('.catalog__cards');
+catalogCards.classList.remove('catalog__cards--load');
+
+// найдем блок catalog__load и скроем его, добавив класс visually-hidden
+var catalogLoad = document.querySelector('.catalog__load');
+catalogLoad.classList.add('visually-hidden');
+
+// наполним каталог: создадим данные, контейнер для отрисовки в него карточек, отрисуем в него карточки и вставим контейнер в каталог
+var goods = getMockGoods(GOODS_NUMBER);
+var fragmentCatalog = document.createDocumentFragment();
+for (var i = 0; i < goods.length; i++) {
+  renderCard(i, goods[i], fragmentCatalog);
+}
+catalogCards.appendChild(fragmentCatalog);
+
+// наполним корзину: создадим данные, контейнер, для отрисовки в него карточек, отрисуем в него карточки и вставим контейнер в корзину
+var goodsInBusket = getMockGoods(GOODS_NUMBER_BASKET);
+var fragmentBasket = document.createDocumentFragment();
+var goodsCards = document.querySelector('.goods__cards');
+for (i = 0; i < goodsInBusket.length; i++) {
+  renderCard(i, goodsInBusket[i], fragmentBasket);
+}
+goodsCards.appendChild(fragmentBasket);
+
+// удалим у блока товары в корзине goods__cards класс goods__cards--empty
+goodsCards.classList.remove('goods__cards--empty');
+
+// скроем блок goods__card-empty добавив ему класс visually-hidden
+document.querySelector('.goods__card-empty').classList.add('visually-hidden');
+
