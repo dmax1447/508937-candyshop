@@ -252,7 +252,7 @@ var validateCard = function (cardNumber) {
       checkSum += number;
     }
   }
-  return checkSum % 10 === 0 ? true : false;
+  return checkSum % 10 === 0;
 };
 
 // добавим валидацию карты на поле с номером карты
