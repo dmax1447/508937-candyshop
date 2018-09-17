@@ -153,16 +153,13 @@ var onBtnToFavorite = function () {
   // console.log('В ИЗБРАННОЕ');
 };
 
-// обработчик кликов для карточки
+// обработчик кликов для карточки в каталоге
 var onCardClick = function (evt) {
-  // сохраним кнопки карточки и саму карточку в переменные
+  // сохраним карточку, ее id и кнопки в ней
   var currentCard = evt.currentTarget;
   var btnFavorite = currentCard.querySelector('.card__btn-favorite');
   var btnChart = currentCard.querySelector('.card__btn');
-  // сохраним id карточки
   var id = currentCard.getAttribute('id');
-  // сохраним шаблон карточки в корзине
-  // var cardInBusket = document.querySelector('#card-order').content.cloneNode(true);
   if (evt.target === btnChart) {
     // обработаем клик по кнопке в корзину
     // проверим есть ли товар в корзине, если есть то увеличим его количество
@@ -184,16 +181,51 @@ var onCardClick = function (evt) {
   }
 };
 
+// обработчик кликов по элементам карточки в корзине
+var onCardInBasket = function (evt) {
+  // сохраним карточку в которой прошел клик и ее id
+  var currentCard = evt.currentTarget;
+  var id = currentCard.getAttribute('id');
+  // найдем кнопки в карточке
+  var btnIncrease = currentCard.querySelector('.card-order__btn--increase');
+  var btnDecrease = currentCard.querySelector('.card-order__btn--decrease');
+  var btnClose = currentCard.querySelector('.card-order__close');
+  // если клик по кнопке '+' то увеличим количество товара в данных и карточке
+  if (evt.target === btnIncrease) {
+    goods[id].QtyinBasket++;
+    currentCard.querySelector('.card-order__count').value++;
+  }
+  // если клик по кнопке '-' то уменьшим количество товара в данных и карточке
+  if (evt.target === btnDecrease && (goods[id].QtyinBasket > 1)) {
+    goods[id].QtyinBasket--;
+    currentCard.querySelector('.card-order__count').value--;
+  }
+  // если клик по кнопке "-" и кол-во товара в корзине = 1, уменьшаем кол-во и удаляем карточку
+  if (evt.target === btnDecrease && (goods[id].QtyinBasket === 1)) {
+    goods[id].QtyinBasket--;
+    goodsCards.removeChild(currentCard);
+  }
+  if (evt.target === btnClose) {
+    goods[id].QtyinBasket = 0;
+    goodsCards.removeChild(currentCard);
+  }
+
+};
+
 // функция отрисовки карточки в корзине, передадим в нее данные для отрисовки в виде объекта, а она вернет отрисованный элемент
 var renderCardInBusket = function (cardData, id) {
+  // сохраним в переменные шаблон и карточку
   var cardTemplate = document.querySelector('#card-order').content.cloneNode(true);
   var card = cardTemplate.querySelector('.goods_card');
+  // заполним поля и аттрибуты картоки данными
   card.setAttribute('id', id);
   card.querySelector('.card-order__title').textContent = cardData.name;
   card.querySelector('.card-order__img').src = cardData.picture;
   card.querySelector('.card-order__img').alt = cardData.name;
   card.querySelector('.card-order__price').textContent = cardData.price;
   card.querySelector('.card-order__count').value = 1;
+  // добавим обработчик кликов по карточке
+  card.addEventListener('click', onCardInBasket);
   return card;
 };
 
