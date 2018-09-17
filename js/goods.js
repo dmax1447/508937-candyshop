@@ -64,6 +64,8 @@ var getMockElement = function () {
   mockElement.nutritionFacts.sugar = getRandomBoolean();
   mockElement.nutritionFacts.energy = getRandomValue(ENERGY_MIN, ENERGY_MAX);
   mockElement.nutritionFacts.contents = getRandomContents();
+  mockElement.QtyinBasket = 0;
+  mockElement.inFavorite = false;
   return mockElement;
 };
 
@@ -163,8 +165,19 @@ var onCardClick = function (evt) {
   // var cardInBusket = document.querySelector('#card-order').content.cloneNode(true);
   if (evt.target === btnChart) {
     // обработаем клик по кнопке в корзину
-    var newCard = renderCardInBusket(goods[id], id);
-    goodsCards.appendChild(newCard);
+    // проверим есть ли товар в корзине, если есть то увеличим его количество
+    if (goods[id].QtyinBasket === 0) {
+      // если товара нет - рисуем его в корзине, и увеличиваем запись о его количестве на 1
+      goods[id].QtyinBasket++;
+      var newCard = renderCardInBusket(goods[id], id);
+      goodsCards.appendChild(newCard);
+    } else {
+      // если товар есть - увеличим запись о его количестве на 1 и изменим данные на карточке
+      goods[id].QtyinBasket++;
+      var exitingCard = getCardInBusket(id);
+      exitingCard.querySelector('.card-order__count').value++;
+    }
+
   }
   if (evt.target === btnFavorite) {
     // обработаем клик по кнопке в избранное
@@ -173,8 +186,9 @@ var onCardClick = function (evt) {
 
 // функция отрисовки карточки в корзине, передадим в нее данные для отрисовки в виде объекта, а она вернет отрисованный элемент
 var renderCardInBusket = function (cardData, id) {
-  var card = document.querySelector('#card-order').content.cloneNode(true);
-  // card.setAttribute('id', id);
+  var cardTemplate = document.querySelector('#card-order').content.cloneNode(true);
+  var card = cardTemplate.querySelector('.goods_card');
+  card.setAttribute('id', id);
   card.querySelector('.card-order__title').textContent = cardData.name;
   card.querySelector('.card-order__img').src = cardData.picture;
   card.querySelector('.card-order__img').alt = cardData.name;
@@ -182,6 +196,13 @@ var renderCardInBusket = function (cardData, id) {
   card.querySelector('.card-order__count').value = 1;
   return card;
 };
+
+var getCardInBusket = function (id) {
+  var idString = '[id="' + id + '"]';
+  var card = goodsCards.querySelector(idString);
+  return card;
+};
+
 
 // найдем блок catalog__cards и уберем у него класс catalog__cards--load
 var catalogCards = document.querySelector('.catalog__cards');
