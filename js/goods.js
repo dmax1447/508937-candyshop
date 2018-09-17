@@ -4,7 +4,7 @@ var mockPictures = ['gum-cedar.jpg', 'gum-chile.jpg', 'gum-eggplant.jpg', 'gum-m
   'soda-russian.jpg'];
 var mockContents = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца', 'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор', 'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит', 'карбамид', 'вилларибо', 'виллабаджо'];
 var starsRatingStyles = ['stars__rating--one', 'stars__rating--two', 'stars__rating--three', 'stars__rating--four', 'stars__rating--five'];
-var GOODS_NUMBER = 10;
+var GOODS_NUMBER = 5;
 var GOODS_NUMBER_BASKET = 0;
 var AMOUNT_MIN = 0;
 var AMOUNT_MAX = 20;
@@ -82,18 +82,11 @@ var getMockGoods = function (number) {
 var renderCard = function (id, cardData, list) {
   // находим и сохраняем шаблон
   var cardTemplate = document.querySelector('#card').content.cloneNode(true);
-
-  // берем из шаблона карточку товара, очищаем класс доступности
   var card = cardTemplate.querySelector('.catalog__card');
-
-  // добавим фото товара
-  card.querySelector('.card__img').src = cardData.picture;
-
   // добавим карточке id
-  // var cardId = '#' + id;
-  // card.classList.add(cardId);
   card.setAttribute('id', id);
-  // добавим карточке товара класс доступности в зависимости от количества
+  // заполним поля карточки по полученным данным
+  card.querySelector('.card__img').src = cardData.picture;
   card.classList.remove('card--in-stock');
   switch (cardData.amount) {
     case 0:
@@ -106,51 +99,19 @@ var renderCard = function (id, cardData, list) {
       card.classList.add('card--in-stock');
       break;
   }
-  // название вставляем в блок card__title
   card.querySelector('.card__title').textContent = cardData.name;
-
-  // цену и вес вставляем в ноды в блок card__price
   card.querySelector('.card__price').childNodes[0].textContent = cardData.price + ' ';
   card.querySelector('.card__price').childNodes[2].textContent = '/ ' + cardData.weight + ' Г';
-
-  // добавим нужный стиль в блок stars__rating
   card.querySelector('.stars__rating').classList.remove('stars__rating--five');
   card.querySelector('.stars__rating').classList.add(starsRatingStyles[cardData.rating.value - 1]);
-
-  // добавим количество голосов в блок star__count
   card.querySelector('.star__count').textContent = '( ' + cardData.rating.number + ' )';
-
-  // оформим блок состав товара card__characteristic, добавим данные о наличии сахара
   var sugar = cardData.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
   card.querySelector('.card__characteristic').textContent = sugar;
-
-  // оформим блок состав товара card__composition-list, добавим данные о содержащихся элементах
   card.querySelector('.card__composition-list').textContent = cardData.nutritionFacts.contents;
-
-  // добавим обработчик на кнопку "добавить в корзину"
-  var btnToChart = card.querySelector('.card__btn');
-  btnToChart.addEventListener('click', onBtnToChart);
-
-  // добавим обработчик на кнопку "в избранное"
-  var btnToFavorite = card.querySelector('.card__btn-favorite');
-  btnToFavorite.addEventListener('click', onBtnToFavorite);
-
   // добавим обработчик клика на карточку товара
   card.addEventListener('click', onCardClick);
-
   // добавим сформированную карточку в контейнер
   list.appendChild(card);
-  // catalogCards.appendChild(card);
-};
-
-// обработчик клика по кнопке в корзину
-var onBtnToChart = function () {
-  // console.log('В КОРЗИНУ');
-};
-
-// обработчик клика по кнопке избранное
-var onBtnToFavorite = function () {
-  // console.log('В ИЗБРАННОЕ');
 };
 
 // обработчик кликов для карточки в каталоге
@@ -160,8 +121,8 @@ var onCardClick = function (evt) {
   var btnFavorite = currentCard.querySelector('.card__btn-favorite');
   var btnChart = currentCard.querySelector('.card__btn');
   var id = currentCard.getAttribute('id');
+  // обработаем клик по кнопке в корзину
   if (evt.target === btnChart) {
-    // обработаем клик по кнопке в корзину
     // проверим есть ли товар в корзине, если есть то увеличим его количество
     if (goods[id].QtyinBasket === 0) {
       // если товара нет - рисуем его в корзине, и увеличиваем запись о его количестве на 1
@@ -176,6 +137,7 @@ var onCardClick = function (evt) {
     }
 
   }
+  // обработаем клик по кнопке в избранное
   if (evt.target === btnFavorite) {
     // обработаем клик по кнопке в избранное
   }
@@ -205,6 +167,7 @@ var onCardInBasket = function (evt) {
     goods[id].QtyinBasket--;
     goodsCards.removeChild(currentCard);
   }
+  // если клик по кнопке "close" обнуляем кол-во товара в корзине в данных и удаляем карточку
   if (evt.target === btnClose) {
     goods[id].QtyinBasket = 0;
     goodsCards.removeChild(currentCard);
@@ -252,14 +215,17 @@ for (var i = 0; i < goods.length; i++) {
 }
 catalogCards.appendChild(fragmentCatalog);
 
+var goodsCards = document.querySelector('.goods__cards');
 // наполним корзину: создадим данные, контейнер, для отрисовки в него карточек, отрисуем в него карточки и вставим контейнер в корзину
+/*
 var goodsInBusket = getMockGoods(GOODS_NUMBER_BASKET);
 var fragmentBasket = document.createDocumentFragment();
-var goodsCards = document.querySelector('.goods__cards');
+
 for (i = 0; i < goodsInBusket.length; i++) {
   renderCard(i, goodsInBusket[i], fragmentBasket);
 }
 goodsCards.appendChild(fragmentBasket);
+*/
 
 // удалим у блока товары в корзине goods__cards класс goods__cards--empty
 goodsCards.classList.remove('goods__cards--empty');
