@@ -5,7 +5,7 @@ var mockPictures = ['gum-cedar.jpg', 'gum-chile.jpg', 'gum-eggplant.jpg', 'gum-m
 var mockContents = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца', 'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор', 'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит', 'карбамид', 'вилларибо', 'виллабаджо'];
 var starsRatingStyles = ['stars__rating--one', 'stars__rating--two', 'stars__rating--three', 'stars__rating--four', 'stars__rating--five'];
 var GOODS_NUMBER = 5;
-var GOODS_NUMBER_BASKET = 0;
+// var GOODS_NUMBER_BASKET = 0;
 var AMOUNT_MIN = 0;
 var AMOUNT_MAX = 20;
 var PRICE_MIN = 100;
@@ -64,7 +64,7 @@ var getMockElement = function () {
   mockElement.nutritionFacts.sugar = getRandomBoolean();
   mockElement.nutritionFacts.energy = getRandomValue(ENERGY_MIN, ENERGY_MAX);
   mockElement.nutritionFacts.contents = getRandomContents();
-  mockElement.QtyinBasket = 0;
+  mockElement.orderCount = 0;
   mockElement.inFavorite = false;
   return mockElement;
 };
@@ -109,13 +109,13 @@ var renderCard = function (id, cardData, list) {
   card.querySelector('.card__characteristic').textContent = sugar;
   card.querySelector('.card__composition-list').textContent = cardData.nutritionFacts.contents;
   // добавим обработчик клика на карточку товара
-  card.addEventListener('click', onCardClick);
+  card.addEventListener('click', onCatalogCardClick);
   // добавим сформированную карточку в контейнер
   list.appendChild(card);
 };
 
 // обработчик кликов для карточки в каталоге
-var onCardClick = function (evt) {
+var onCatalogCardClick = function (evt) {
   // сохраним карточку, ее id и кнопки в ней
   var currentCard = evt.currentTarget;
   var btnFavorite = currentCard.querySelector('.card__btn-favorite');
@@ -124,14 +124,14 @@ var onCardClick = function (evt) {
   // обработаем клик по кнопке в корзину
   if (evt.target === btnChart) {
     // проверим есть ли товар в корзине, если есть то увеличим его количество
-    if (goods[id].QtyinBasket === 0) {
+    if (goods[id].orderCount === 0) {
       // если товара нет - рисуем его в корзине, и увеличиваем запись о его количестве на 1
-      goods[id].QtyinBasket++;
+      goods[id].orderCount++;
       var newCard = renderCardInBusket(goods[id], id);
       goodsCards.appendChild(newCard);
     } else {
       // если товар есть - увеличим запись о его количестве на 1 и изменим данные на карточке
-      goods[id].QtyinBasket++;
+      goods[id].orderCount++;
       var exitingCard = getCardInBusket(id);
       exitingCard.querySelector('.card-order__count').value++;
     }
@@ -144,7 +144,7 @@ var onCardClick = function (evt) {
 };
 
 // обработчик кликов по элементам карточки в корзине
-var onCardInBasket = function (evt) {
+var onOrderCardClick = function (evt) {
   // сохраним карточку в которой прошел клик и ее id
   var currentCard = evt.currentTarget;
   var id = currentCard.getAttribute('id');
@@ -154,22 +154,21 @@ var onCardInBasket = function (evt) {
   var btnClose = currentCard.querySelector('.card-order__close');
   // если клик по кнопке '+' то увеличим количество товара в данных и карточке
   if (evt.target === btnIncrease) {
-    goods[id].QtyinBasket++;
+    goods[id].orderCount++;
     currentCard.querySelector('.card-order__count').value++;
   }
-  // если клик по кнопке '-' то уменьшим количество товара в данных и карточке
-  if (evt.target === btnDecrease && (goods[id].QtyinBasket > 1)) {
-    goods[id].QtyinBasket--;
-    currentCard.querySelector('.card-order__count').value--;
-  }
-  // если клик по кнопке "-" и кол-во товара в корзине = 1, уменьшаем кол-во и удаляем карточку
-  if (evt.target === btnDecrease && (goods[id].QtyinBasket === 1)) {
-    goods[id].QtyinBasket--;
-    goodsCards.removeChild(currentCard);
+  // если клик по кнопке '-' то уменьшим количества товара и(или) удалим карточку
+  if (evt.target === btnDecrease) {
+    if (goods[id].orderCount === 1) {
+      goodsCards.removeChild(currentCard);
+    } else {
+      currentCard.querySelector('.card-order__count').value--;
+    }
+    goods[id].orderCount--;
   }
   // если клик по кнопке "close" обнуляем кол-во товара в корзине в данных и удаляем карточку
   if (evt.target === btnClose) {
-    goods[id].QtyinBasket = 0;
+    goods[id].orderCount = 0;
     goodsCards.removeChild(currentCard);
   }
 
@@ -188,7 +187,7 @@ var renderCardInBusket = function (cardData, id) {
   card.querySelector('.card-order__price').textContent = cardData.price;
   card.querySelector('.card-order__count').value = 1;
   // добавим обработчик кликов по карточке
-  card.addEventListener('click', onCardInBasket);
+  card.addEventListener('click', onOrderCardClick);
   return card;
 };
 
