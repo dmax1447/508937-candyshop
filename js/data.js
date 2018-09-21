@@ -52,8 +52,9 @@
   };
 
   // функция генерации объекта-товара
-  var getMockElement = function () {
+  var getMockElement = function (_id) {
     var mockElement = {};
+    mockElement.id = _id;
     mockElement.name = getRandomElement(mockNames);
     mockElement.picture = 'img/cards/' + getRandomElement(mockPictures);
     mockElement.amount = getRandomValue(AMOUNT_MIN, AMOUNT_MAX);
@@ -66,23 +67,34 @@
     mockElement.nutritionFacts.sugar = getRandomBoolean();
     mockElement.nutritionFacts.energy = getRandomValue(ENERGY_MIN, ENERGY_MAX);
     mockElement.nutritionFacts.contents = getRandomContents();
-    mockElement.orderCount = 0;
     mockElement.inFavorite = false;
     return mockElement;
   };
+
 
   // функция создания массива данных
   var getMockGoods = function (number) {
     var mockGoods = [];
     for (var i = 0; i < number; i++) {
-      mockGoods[i] = getMockElement();
+      mockGoods[i] = getMockElement(i);
     }
     return mockGoods;
   };
 
   // экспортируемые данные:
   window.data = {
-    goods: getMockGoods(GOODS_NUMBER)
+    goodsInCatalog: getMockGoods(GOODS_NUMBER),
+    goodsInOrder: [],
+    findItemById: function (idValue, list) {
+      var idValueInt = parseInt(idValue, 10);
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === idValueInt) {
+          return list[i];
+        }
+      }
+      return undefined;
+    }
+
   };
 
 })();

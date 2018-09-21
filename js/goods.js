@@ -10,27 +10,59 @@
   var goodsCards = document.querySelector('.goods__cards'); // блок товары в корзине
   var catalogLoad = document.querySelector('.catalog__load'); // блок уведомления о загрузке
 
-  // элементы каталога
+  // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
+  var findItemById = function (idValue, list) {
+    var idValueInt = parseInt(idValue, 10);
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === idValueInt) {
+        return list[i];
+      }
+    }
+    return undefined;
+  };
 
-
+  // функция добавляет запись в корзину
+  /*
+  var addGoodsItemToOrder = function (goodsInCatalogItem) {
+  // попробуем найти элемент каталога в корзине
+    var goodsInOrderItem = findItemById(goodsInCatalogItem.id, window.data.goodsInOrder);
+    // проверяем есть ли товар в каталоге
+    if (goodsInCatalogItem.amount >= 1) {
+      // если записи в корзине нет - создаем
+      if (goodsInOrderItem === undefined) {
+        goodsInOrderItem = Object.assign({}, goodsInCatalogItem);
+        delete goodsInOrderItem.amount;
+        goodsInOrderItem.orderedAmount = 0;
+        window.data.goodsInOrder.push(goodsInOrderItem);
+      }
+      goodsInOrderItem.orderedAmount++;
+      goodsInCatalogItem.amount--;
+    }
+  };
+  */
   // обработчик кликов - работа кнопок в избранное и в корзину
   var onCatalogCardClick = function (evt) {
     // сохраним карточку, ее id и кнопки в ней
-    var currentCard = evt.currentTarget;
-    var btnFavorite = currentCard.querySelector('.card__btn-favorite');
-    var btnChart = currentCard.querySelector('.card__btn');
-    var id = currentCard.getAttribute('id');
+    var currentCard = evt.currentTarget; // текущая карточка
+    var btnFavorite = currentCard.querySelector('.card__btn-favorite'); // кнопка избранное
+    var btnChart = currentCard.querySelector('.card__btn'); // кнопка в корзину
+    var id = currentCard.getAttribute('id'); // сохраняем id товара из карточки
+    var goodsInCatalogItem = findItemById(id, window.data.goodsInCatalog); // найдем в каталоге товар соответствующий карточке
     if (evt.target === btnChart) { // если клик по кнопке в корзину
-      if (window.data.goods[id].orderCount === 0) {
-        // если товара нет - рисуем его в корзине, и увеличиваем запись о его количестве на 1
-        window.data.goods[id].orderCount++;
-        var newCard = window.busket.renderCardInBusket(window.data.goods[id], id);
-        goodsCards.appendChild(newCard);
-      } else {
-        // если товар есть - увеличим запись о его количестве на 1 и изменим данные на карточке
-        window.data.goods[id].orderCount++;
-        var exitingCard = goodsCards.querySelector('[id="' + id + '"]');
-        exitingCard.querySelector('.card-order__count').value++;
+      if (goodsInCatalogItem.amount >= 1) { // проверяем есть ли товар в каталоге
+        var goodsInOrderItem = findItemById(id, window.data.goodsInOrder); // пробуем найти в корзине товар соответствующий карточке
+        if (goodsInOrderItem === undefined) { // если товара в корзине нет
+          goodsInOrderItem = Object.assign({}, goodsInCatalogItem); // создаем объект и копируем в него данные из карточки товара
+          delete goodsInOrderItem.amount; // удаляем ненужный ключ
+          goodsInOrderItem.orderedAmount = 0; // устанавливаем начальное значение
+          window.data.goodsInOrder.push(goodsInOrderItem); // добавляем созданный объект в массив корзина
+          var newCard = window.busket.renderCardInBusket(goodsInOrderItem); // отрисуем карточку товара в корзине
+          goodsCards.appendChild(newCard); // добавим ее в раздел корзина
+        }
+        goodsInOrderItem.orderedAmount++; // увеличим количество товара в объекте в корзине
+        goodsInCatalogItem.amount--; // уменьшим количество товара в объекте в каталоге
+        var CardInOrder = goodsCards.querySelector('[id="' + id + '"]');
+        CardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount; // обновим количество товара в карточке корзина
       }
     }
     // обработаем клик по кнопке в избранное
@@ -81,8 +113,8 @@
 
   // отрисуем каталог по данным
   var fragmentCatalog = document.createDocumentFragment();
-  for (var i = 0; i < window.data.goods.length; i++) {
-    renderCard(i, window.data.goods[i], fragmentCatalog);
+  for (var i = 0; i < window.data.goodsInCatalog.length; i++) {
+    renderCard(i, window.data.goodsInCatalog[i], fragmentCatalog);
   }
   catalogCards.appendChild(fragmentCatalog);
 
