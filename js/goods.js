@@ -25,6 +25,7 @@
 
   // обработчик кликов - работа кнопок в избранное и в корзину
   var onCatalogCardClick = function (evt) {
+    // debugger;
     // сохраним карточку, ее id и кнопки в ней
     var currentCard = evt.currentTarget; // текущая карточка
     var btnFavorite = currentCard.querySelector('.card__btn-favorite'); // кнопка избранное
@@ -54,6 +55,7 @@
     if (evt.target === btnFavorite) {
       evt.preventDefault();
       btnFavorite.classList.toggle('card__btn-favorite--selected');
+      btnFavorite.blur();
     }
   };
 
