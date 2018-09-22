@@ -32,6 +32,7 @@
     var id = currentCard.getAttribute('id'); // сохраняем id товара из карточки
     var goodsInCatalogItem = findItemById(id, catalogData); // найдем в каталоге товар соответствующий карточке
     if (evt.target === btnChart) { // если клик по кнопке в корзину
+      evt.preventDefault();
       if (goodsInCatalogItem.amount >= 1) { // проверяем есть ли товар в каталоге
         var goodsInOrderItem = findItemById(id, orderData); // пробуем найти в корзине товар соответствующий карточке
         if (goodsInOrderItem === undefined) { // если товара в корзине нет
@@ -50,26 +51,16 @@
       busketInHeader.textContent = 'В корзине: ' + window.busket.countAmountOfGoods(orderData);
     }
     // обработаем клик по кнопке в избранное
-    /*
     if (evt.target === btnFavorite) {
       evt.preventDefault();
       btnFavorite.classList.toggle('card__btn-favorite--selected');
-    }*/
-  };
-  var onBtnFavoriteClick = function (evt) {
-    var btn = evt.target;
-    evt.preventDefault();
-    btn.classList.toggle('card__btn-favorite--selected');
-
+    }
   };
 
   var renderCard = function (id, cardData, list) {
-    // находим и сохраняем шаблон
-    var cardTemplate = document.querySelector('#card').content.cloneNode(true);
+    var cardTemplate = document.querySelector('#card').content.cloneNode(true); // находим и сохраняем шаблон
     var card = cardTemplate.querySelector('.catalog__card');
-    var btnFavorite = card.querySelector('.card__btn-favorite');
-    // добавим карточке id
-    card.setAttribute('id', id);
+    card.setAttribute('id', id); // добавим карточке id
     // заполним поля карточки по полученным данным
     card.querySelector('.card__img').src = cardData.picture;
     card.classList.remove('card--in-stock');
@@ -93,17 +84,12 @@
     var sugar = cardData.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
     card.querySelector('.card__characteristic').textContent = sugar;
     card.querySelector('.card__composition-list').textContent = cardData.nutritionFacts.contents;
-    // добавим обработчик клика на карточку товара
-    card.addEventListener('click', onCatalogCardClick);
-    btnFavorite.addEventListener('click', onBtnFavoriteClick);
-    // добавим сформированную карточку в контейнер
-    list.appendChild(card);
+    card.addEventListener('click', onCatalogCardClick); // добавим обработчик клика на карточку товара
+    list.appendChild(card); // добавим сформированную карточку в контейнер
   };
 
-  // у блока catalog__cards уберем класс catalog__cards--load
-  catalogCards.classList.remove('catalog__cards--load');
-  // блока catalog__load скроем, добавив класс visually-hidden
-  catalogLoad.classList.add('visually-hidden');
+  catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
+  catalogLoad.classList.add('visually-hidden'); // блока catalog__load скроем, добавив класс visually-hidden
 
   // отрисуем каталог по данным
   var fragmentCatalog = document.createDocumentFragment();
@@ -112,10 +98,8 @@
   }
   catalogCards.appendChild(fragmentCatalog);
 
-  // удалим у блока товары в корзине goods__cards класс goods__cards--empty
-  goodsCards.classList.remove('goods__cards--empty');
-  // скроем блок goods__card-empty добавив ему класс visually-hidden
-  document.querySelector('.goods__card-empty').classList.add('visually-hidden');
+  goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
+  document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
 
   // КОНЕЦ МОДУЛЯ
 })();

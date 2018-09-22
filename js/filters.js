@@ -2,16 +2,24 @@
 'use strict';
 (function () {
   // начало
-  var catalogFilterRange = document.querySelector('.range');
-  var leftSlider = catalogFilterRange.querySelector('.range__btn--left');
-  var rightSlider = catalogFilterRange.querySelector('.range__btn--right');
+  var catalogFilterRange = document.querySelector('.range'); // блок с фильтром
+  var leftSlider = catalogFilterRange.querySelector('.range__btn--left'); // левый пин
+  var rightSlider = catalogFilterRange.querySelector('.range__btn--right'); // правый пин
   var rangeFilter = catalogFilterRange.querySelector('.range__filter');
   var range = rangeFilter.clientWidth; // ширина бара фильтра = диапазон
+  var rangePriceMin = catalogFilterRange.querySelector('.range__price--min'); // поле цены левого пина
+  var rangePriceMax = catalogFilterRange.querySelector('.range__price--max'); // поле цены правого пина
+  var rangeFillLine = catalogFilterRange.querySelector('.range__fill-line'); // полоска между пинами
   var priceMin = 100;
   var priceMax = 1500;
-  var rangePriceMin = catalogFilterRange.querySelector('.range__price--min');
-  var rangePriceMax = catalogFilterRange.querySelector('.range__price--max');
-  var rangeFillLine = catalogFilterRange.querySelector('.range__fill-line');
+  // выставим начальные значения слайдера и бара;
+  leftSlider.style.left = 0;
+  rightSlider.style.left = range + 'px';
+  rangeFillLine.style.left = 0;
+  rangeFillLine.style.right = 0;
+  rangePriceMin.textContent = priceMin;
+  rangePriceMax.textContent = priceMax;
+
 
   // функция вычисления
 
