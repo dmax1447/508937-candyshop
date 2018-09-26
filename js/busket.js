@@ -41,7 +41,7 @@
     busketInHeader.textContent = 'В корзине: ' + window.busket.countAmountOfGoods(orderData); // обновляем инфу в шапке
   };
 
-  // ЭКСПОРТ
+  // экспорт:
   window.busket = {
     renderCardInBusket: function (cardData) {
       // сохраним в переменные шаблон и карточку
@@ -67,6 +67,4 @@
     }
 
   };
-
-  // КОНЕЦ МОДУЛЯ
 })();
