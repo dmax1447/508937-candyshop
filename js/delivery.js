@@ -21,8 +21,6 @@
     }
   };
 
-
   // добавим обработчик на раздел выбора метода доставки
   deliveryToggle.addEventListener('click', onDeliveryBtnsClick);
-  // конец
 })();

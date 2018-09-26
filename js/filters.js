@@ -1,7 +1,6 @@
 // модуль работы с фильтрами
 'use strict';
 (function () {
-  // начало
   var catalogFilterRange = document.querySelector('.range'); // блок с фильтром
   var leftPin = catalogFilterRange.querySelector('.range__btn--left');
   var rightPin = catalogFilterRange.querySelector('.range__btn--right'); // правый пин
@@ -54,6 +53,6 @@
   };
 
   // добавляем обработчики
-  leftPin.addEventListener('mousedown', onPinMouseDown); // добавляем обработчик "нажатие кнопки мыши"
-  rightPin.addEventListener('mousedown', onPinMouseDown);
+  leftPin.addEventListener('mousedown', onPinMouseDown); // добавляем обработчик "нажатие кнопки мыши" на левый пин
+  rightPin.addEventListener('mousedown', onPinMouseDown); // добавляем обработчик "нажатие кнопки мыши" на правый пин
 })();
