@@ -113,9 +113,6 @@
     catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
     catalogLoad.classList.add('visually-hidden'); // блок catalog__load скроем, добавив класс visually-hidden
     catalogCards.appendChild(catalogFragment);
-    console.log('данные в window.data.catalogData: ');
-    console.dir(window.data.goodsInCatalog);
-
   };
   // Функция показывает сообщение об ошибке:
   var showErrorMessage = function (message) {
