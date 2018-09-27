@@ -19,6 +19,7 @@
   var busketInHeader = document.querySelector('.main-header__basket'); // корзинка в заголовке
   var modalError = document.querySelector('.modal--error'); // блок сообщение об ошибке
   // var modalSuccess = document.querySelector('modal--success'); // блок сообщение об успешном действии
+
   // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
   var findItemById = function (idValue, list) {
     var idValueInt = parseInt(idValue, 10);
