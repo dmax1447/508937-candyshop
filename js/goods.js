@@ -19,8 +19,7 @@
   var busketInHeader = document.querySelector('.main-header__basket'); // корзинка в заголовке
   var modalError = document.querySelector('.modal--error'); // блок сообщение об ошибке
   // var modalSuccess = document.querySelector('modal--success'); // блок сообщение об успешном действии
-  var orderData = window.data.goodsInOrder; // данные о заказах
-  var catalogData; // данные о каталоге
+
   // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
   var findItemById = function (idValue, list) {
     var idValueInt = parseInt(idValue, 10);
@@ -34,13 +33,14 @@
 
   // обработчик кликов - работа кнопок в избранное и в корзину
   var onCatalogCardClick = function (evt) {
-    // debugger;
     // сохраним карточку, ее id и кнопки в ней
+    var orderData = window.data.goodsInOrder;
+    var catalogData = window.data.goodsInCatalog;
     var currentCard = evt.currentTarget; // текущая карточка
     var btnFavorite = currentCard.querySelector('.card__btn-favorite'); // кнопка избранное
     var btnChart = currentCard.querySelector('.card__btn'); // кнопка в корзину
-    var id = currentCard.getAttribute('id'); // сохраняем id товара из карточки
-    var goodsInCatalogItem = findItemById(id, catalogData); // найдем в каталоге товар соответствующий карточке
+    var id = parseInt(currentCard.getAttribute('id'), 10); // сохраняем id товара из карточки
+    var goodsInCatalogItem = catalogData[id]; // найдем в каталоге товар соответствующий карточке
     if (evt.target === btnChart) { // если клик по кнопке в корзину
       evt.preventDefault();
       if (goodsInCatalogItem.amount >= 1) { // проверяем есть ли товар в каталоге
@@ -59,6 +59,7 @@
         cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount; // обновим количество товара в карточке корзина
       }
       busketInHeader.textContent = 'В корзине: ' + window.busket.countAmountOfGoods(orderData);
+
     }
     // обработаем клик по кнопке в избранное
     if (evt.target === btnFavorite) {
@@ -102,13 +103,19 @@
 
   // Функция для отрисовки каталога
   var renderCatalog = function (cardsData) {
-    // catalogData = cardsData; // сохраним полученные данные для дальнейшей работы
+    window.data.goodsInCatalog = cardsData; // сохраним полученные данные для дальнейшей работы
     var catalogFragment = document.createDocumentFragment(); // создаем пустой фрагмент
     for (var i = 0; i < cardsData.length; i++) {
+      window.data.goodsInCatalog[i].id = i;
       var card = renderCard(i, cardsData[i]);
       catalogFragment.appendChild(card); // вставляем сгенерированный по данным элемент(волшебника) в пустой фрагмент
     }
+    catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
+    catalogLoad.classList.add('visually-hidden'); // блок catalog__load скроем, добавив класс visually-hidden
     catalogCards.appendChild(catalogFragment);
+    console.log('данные в window.data.catalogData: ');
+    console.dir(window.data.goodsInCatalog);
+
   };
   // Функция показывает сообщение об ошибке:
   var showErrorMessage = function (message) {
@@ -117,8 +124,6 @@
   };
 
   window.backend.loadCatalog(renderCatalog, showErrorMessage); // пытаемся загрузить каталог, если удачно - то рендерим в список, если нет то выводим сообщение об ошибке
-  catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
-  catalogLoad.classList.add('visually-hidden'); // блока catalog__load скроем, добавив класс visually-hidden
   goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
   document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
 

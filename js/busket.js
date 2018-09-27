@@ -4,14 +4,11 @@
   // переменные и элементы интерфейса
   var goodsCards = document.querySelector('.goods__cards');
   var busketInHeader = document.querySelector('.main-header__basket');
-  var orderData = [];
-  var catalogData = window.data.goodsInCatalog;
-
-
-  // экспорт
 
   // обработчик кликов по элементам карточки в корзине
   var onOrderCardClick = function (evt) {
+    var orderData = window.data.goodsInOrder;
+    var catalogData = window.data.goodsInCatalog;
     var currentCard = evt.currentTarget; // карточка по которой кликнул
     var id = currentCard.getAttribute('id'); // получаем id товара по которуму кликнули
     var goodsInOrderItem = window.data.findItemById(id, orderData); // находим объект-товар в массиве-каталоге
@@ -44,9 +41,10 @@
     busketInHeader.textContent = 'В корзине: ' + window.busket.countAmountOfGoods(orderData); // обновляем инфу в шапке
   };
 
+
   // экспорт:
   window.busket = {
-    data: orderData,
+
     renderCardInBusket: function (cardData) {
       // сохраним в переменные шаблон и карточку
       var cardTemplate = document.querySelector('#card-order').content.cloneNode(true);
@@ -54,7 +52,7 @@
       // заполним поля и аттрибуты картоки данными
       card.setAttribute('id', cardData.id);
       card.querySelector('.card-order__title').textContent = cardData.name;
-      card.querySelector('.card-order__img').src = cardData.picture;
+      card.querySelector('.card-order__img').src = 'img/cards/' + cardData.picture;
       card.querySelector('.card-order__img').alt = cardData.name;
       card.querySelector('.card-order__price').textContent = cardData.price;
       card.querySelector('.card-order__count').value = cardData.orderCount;
