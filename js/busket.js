@@ -4,8 +4,11 @@
   // переменные и элементы интерфейса
   var goodsCards = document.querySelector('.goods__cards');
   var busketInHeader = document.querySelector('.main-header__basket');
+  var orderData = [];
   var catalogData = window.data.goodsInCatalog;
-  var orderData = window.data.goodsInOrder;
+
+
+  // экспорт
 
   // обработчик кликов по элементам карточки в корзине
   var onOrderCardClick = function (evt) {
@@ -43,6 +46,7 @@
 
   // экспорт:
   window.busket = {
+    data: orderData,
     renderCardInBusket: function (cardData) {
       // сохраним в переменные шаблон и карточку
       var cardTemplate = document.querySelector('#card-order').content.cloneNode(true);
