@@ -19,7 +19,12 @@
   var busketInHeader = document.querySelector('.main-header__basket'); // корзинка в заголовке
   var modalError = document.querySelector('.modal--error'); // блок сообщение об ошибке
   // var modalSuccess = document.querySelector('modal--success'); // блок сообщение об успешном действии
+<<<<<<< HEAD
 
+=======
+  var orderData = window.data.goodsInOrder; // данные о заказах
+  var catalogData = window.data.goodsInCatalog; // данные о каталоге
+>>>>>>> d402e18061b7911502aa9e244054e96315d4de76
   // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
   var findItemById = function (idValue, list) {
     var idValueInt = parseInt(idValue, 10);
@@ -103,6 +108,7 @@
 
   // Функция для отрисовки каталога
   var renderCatalog = function (cardsData) {
+<<<<<<< HEAD
     window.data.goodsInCatalog = cardsData; // сохраним полученные данные для дальнейшей работы
     var catalogFragment = document.createDocumentFragment(); // создаем пустой фрагмент
     for (var i = 0; i < cardsData.length; i++) {
@@ -112,6 +118,13 @@
     }
     catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
     catalogLoad.classList.add('visually-hidden'); // блок catalog__load скроем, добавив класс visually-hidden
+=======
+    var catalogFragment = document.createDocumentFragment(); // создаем пустой фрагмент
+    for (var i = 0; i < cardsData.length; i++) {
+      var card = renderCard(i, cardsData[i]);
+      catalogFragment.appendChild(card); // вставляем сгенерированный по данным элемент(волшебника) в пустой фрагмент
+    }
+>>>>>>> d402e18061b7911502aa9e244054e96315d4de76
     catalogCards.appendChild(catalogFragment);
   };
   // Функция показывает сообщение об ошибке:
@@ -121,6 +134,11 @@
   };
 
   window.backend.loadCatalog(renderCatalog, showErrorMessage); // пытаемся загрузить каталог, если удачно - то рендерим в список, если нет то выводим сообщение об ошибке
+<<<<<<< HEAD
+=======
+  catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
+  catalogLoad.classList.add('visually-hidden'); // блока catalog__load скроем, добавив класс visually-hidden
+>>>>>>> d402e18061b7911502aa9e244054e96315d4de76
   goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
   document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
 
