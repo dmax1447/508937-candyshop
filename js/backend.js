@@ -6,7 +6,8 @@
   var GET_URL = 'https://js.dump.academy/candyshop/data';
   var POST_URL = 'https://js.dump.academy/candyshop';
   var TIMEOUT = 10000;
-
+  // блок сообщение об ошибке
+  // блок сообщение об успешном действии
   var Code = {
     SUCCESS: 200,
     NOT_FROUND_ERROR: 404,
@@ -45,6 +46,17 @@
     // функция отправки данных
     sendFormData: function (onSuccess, onError, data) {
       makeRequest(onSuccess, onError, POST_URL, 'POST', data);
+    },
+    // функция показа окна ошибки
+    showError: function (message) {
+      var modalError = document.querySelector('.modal--error');
+      modalError.classList.toggle('modal--hidden');
+      modalError.querySelector('p').textContent = 'Произошла ошибка: ' + message;
+    },
+    showSuccess: function (message) {
+      var modalSuccess = document.querySelector('.modal--success');
+      modalSuccess.classList.toggle('modal--hidden');
+      // modalSuccess.querySelector('p').textContent = 'Все ок: ' + message;
     }
   };
 

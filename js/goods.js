@@ -17,8 +17,6 @@
   var goodsCards = document.querySelector('.goods__cards'); // блок товары в корзине
   var catalogLoad = document.querySelector('.catalog__load'); // блок уведомления о загрузке
   var busketInHeader = document.querySelector('.main-header__basket'); // корзинка в заголовке
-  var modalError = document.querySelector('.modal--error'); // блок сообщение об ошибке
-  // var modalSuccess = document.querySelector('modal--success'); // блок сообщение об успешном действии
 
   // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
   var findItemById = function (idValue, list) {
@@ -114,13 +112,9 @@
     catalogLoad.classList.add('visually-hidden'); // блок catalog__load скроем, добавив класс visually-hidden
     catalogCards.appendChild(catalogFragment);
   };
-  // Функция показывает сообщение об ошибке:
-  var showErrorMessage = function (message) {
-    modalError.classList.toggle('modal--hidden');
-    modalError.querySelector('p').textContent = 'Произошла ошибка: ' + message;
-  };
 
-  window.backend.loadCatalog(renderCatalog, showErrorMessage); // пытаемся загрузить каталог, если удачно - то рендерим в список, если нет то выводим сообщение об ошибке
+
+  window.backend.loadCatalog(renderCatalog, window.backend.showError); // пытаемся загрузить каталог, если удачно - то рендерим в список, если нет то выводим сообщение об ошибке
   goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
   document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
 

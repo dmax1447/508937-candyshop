@@ -4,6 +4,8 @@
   // переменные и элементы интерфейса
   var goodsCards = document.querySelector('.goods__cards');
   var busketInHeader = document.querySelector('.main-header__basket');
+  var form = document.querySelector('form');
+  var btnSubmit = document.querySelector('.buy__submit-btn');
 
   // обработчик кликов по элементам карточки в корзине
   var onOrderCardClick = function (evt) {
@@ -40,7 +42,15 @@
     }
     busketInHeader.textContent = 'В корзине: ' + window.busket.countAmountOfGoods(orderData); // обновляем инфу в шапке
   };
+  // функция показа окна при успехе
 
+  // обработчик кликов по кнопке Заказать
+  var onBtnSubmitClick = function (evt) {
+    evt.preventDefault(); // убираем действие по умолчанию
+    // пытаемся отправить данные формы, при успехе - коллбек на закрытие окна, при ошибке - вывести ошибку
+    window.backend.sendFormData(window.backend.showSuccess, window.backend.showError, new FormData(form));
+  };
+  btnSubmit.addEventListener('click', onBtnSubmitClick);
 
   // экспорт:
   window.busket = {
