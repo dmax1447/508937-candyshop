@@ -50,13 +50,23 @@
     // функция показа окна ошибки
     showError: function (message) {
       var modalError = document.querySelector('.modal--error');
-      modalError.classList.toggle('modal--hidden');
-      modalError.querySelector('p').textContent = 'Произошла ошибка: ' + message;
+      var messageField = modalError.querySelector('p.modal__message');
+      var btnClose = modalError.querySelector('.modal__close');
+      messageField.textContent = message;
+      var onBtnCloseClick = function () {
+        modalError.classList.add('modal--hidden');
+      };
+      modalError.classList.remove('modal--hidden');
+      btnClose.addEventListener('click', onBtnCloseClick);
     },
-    showSuccess: function (message) {
+    showSuccess: function () {
       var modalSuccess = document.querySelector('.modal--success');
-      modalSuccess.classList.toggle('modal--hidden');
-      // modalSuccess.querySelector('p').textContent = 'Все ок: ' + message;
+      var btnClose = modalSuccess.querySelector('.modal__close');
+      var onBtnCloseClick = function () {
+        modalSuccess.classList.add('modal--hidden');
+      };
+      modalSuccess.classList.remove('modal--hidden');
+      btnClose.addEventListener('click', onBtnCloseClick);
     }
   };
 

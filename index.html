@@ -24,7 +24,7 @@
       <h2 class="visually-hidden">Каталог товаров</h2>
 
       <aside class="catalog__sidebar">
-        <form action="/">
+        <form enctype="multipart/form-data" method="post" autocomplete="off">
 
           <ul class="catalog__filter">
             <li class="input-btn">
@@ -215,7 +215,7 @@
                 <div class="payment__inputs">
                   <div class="payment__card-group">
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--card-number">
-                      <input type="text" class="text-input__input" name="card-number" id="payment__card-number" placeholder="Номер карты" pattern="[0-9]{16}" minlength="16" maxlength="16" required>
+                      <input type="text" class="text-input__input" name="card-number" id="payment__card-number" placeholder="Номер карты" pattern="[0-9]{16}" required>
                       <label class="text-input__label" for="payment__card-number">Номер карты</label>
                     </p>
 
