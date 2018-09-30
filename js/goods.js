@@ -56,7 +56,7 @@
         var cardInOrder = goodsCards.querySelector('[id="' + id + '"]');
         cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount; // обновим количество товара в карточке корзина
       }
-      busketInHeader.textContent = 'В корзине: ' + window.busket.countAmountOfGoods(orderData);
+      busketInHeader.textContent = 'В корзине: ' + orderData.length;
 
     }
     // обработаем клик по кнопке в избранное

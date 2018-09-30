@@ -7,6 +7,7 @@
   var formOrder = document.querySelectorAll('form')[1];
   var btnSubmit = document.querySelector('.buy__submit-btn');
 
+
   // обработчик кликов по элементам карточки в корзине
   var onOrderCardClick = function (evt) {
     var orderData = window.data.goodsInOrder;
@@ -40,27 +41,30 @@
       goodsCards.removeChild(currentCard); // удаляем карточку товара из корзины
       orderData.splice(index, 1); // удаляем объект товар из массива корзина
     }
-    busketInHeader.textContent = 'В корзине: ' + window.busket.countAmountOfGoods(orderData); // обновляем инфу в шапке
+    busketInHeader.textContent = 'В корзине: ' + orderData.length; // обновляем инфу в шапке
   };
   // функция показа окна при успехе
 
   // обработчик кликов по кнопке Заказать
   var onBtnSubmitClick = function (evt) {
-    evt.preventDefault(); // убираем действие по умолчанию
-    if (formOrder.checkValidity() && window.payments.checkCardNumber()) { // проверим, заполнена ли форма правильно, и номер карты верный
+    // evt.preventDefault(); // убираем действие по умолчанию
+    if (formOrder.checkValidity()) { // проверим, заполнена ли форма правильно, и номер карты верный
+      evt.preventDefault();
       window.backend.sendFormData(window.backend.showSuccess, window.backend.showError, new FormData(formOrder)); // отправляем данные
       formOrder.reset(); // сбрасываем поля формы
       document.querySelector('.payment__card-status').textContent = 'не определен'; // возвращаем текст про номер карты
+      document.querySelector('.payment__card-wrap').classList.remove('visually-hidden'); // скрываем вкладку наличные
+      document.querySelector('.payment__cash-wrap').classList.add('visually-hidden'); // выводим вкладку оплата картой
     } else {
-      window.backend.showError('Форма заполнена неправильно'); // иначе выводим сообщение об ошибке
+      console.log('форма не валидна');
     }
+
   };
 
   btnSubmit.addEventListener('click', onBtnSubmitClick); // вешаем обработчик на кнопку отправить
 
   // экспорт:
   window.busket = {
-
     renderCardInBusket: function (cardData) {
       // сохраним в переменные шаблон и карточку
       var cardTemplate = document.querySelector('#card-order').content.cloneNode(true);
@@ -76,13 +80,5 @@
       card.addEventListener('click', onOrderCardClick);
       return card;
     },
-    countAmountOfGoods: function (_orderData) {
-      var amountOfGoods = 0;
-      for (var i = 0; i < _orderData.length; i++) {
-        amountOfGoods += _orderData[i].orderedAmount;
-      }
-      return amountOfGoods;
-    }
-
   };
 })();

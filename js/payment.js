@@ -12,10 +12,18 @@
     if (evt.target === btnPaymentCard) {
       paymentByCardTab.classList.remove('visually-hidden');
       paymentByCashTab.classList.add('visually-hidden');
+      document.querySelector('#payment__card-number').setAttribute('required', '');
+      document.querySelector('#payment__card-date').setAttribute('required', '');
+      document.querySelector('#payment__card-cvc').setAttribute('required', '');
+      document.querySelector('#payment__cardholder').setAttribute('required', '');
     }
     if (evt.target === btnPaymentCash) {
       paymentByCashTab.classList.remove('visually-hidden');
       paymentByCardTab.classList.add('visually-hidden');
+      document.querySelector('#payment__card-number').removeAttribute('required');
+      document.querySelector('#payment__card-date').removeAttribute('required');
+      document.querySelector('#payment__card-cvc').removeAttribute('required');
+      document.querySelector('#payment__cardholder').removeAttribute('required');
     }
   };
 
