@@ -24,7 +24,7 @@
       <h2 class="visually-hidden">Каталог товаров</h2>
 
       <aside class="catalog__sidebar">
-        <form action="/">
+        <form enctype="multipart/form-data" method="post" autocomplete="off">
 
           <ul class="catalog__filter">
             <li class="input-btn">
@@ -215,7 +215,7 @@
                 <div class="payment__inputs">
                   <div class="payment__card-group">
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--card-number">
-                      <input type="text" class="text-input__input" name="card-number" id="payment__card-number" placeholder="Номер карты" pattern="[0-9]{16}" minlength="16" maxlength="16" required>
+                      <input type="text" class="text-input__input" name="card-number" id="payment__card-number" placeholder="Номер карты" pattern="[0-9]{16}" required>
                       <label class="text-input__label" for="payment__card-number">Номер карты</label>
                     </p>
 
@@ -400,8 +400,8 @@
       </div>
     </div>
   </footer>
-
-  <section class="modal modal--hidden">
+  <!-- поменял класс modal на  'modalerror' -->
+  <section class="modal--error modal--hidden">
     <div class="modal__inner">
       <button class="modal__close" type="button">Закрыть окно</button>
       <h3 class="modal__title">Произошла ошибка!</h3>
@@ -410,7 +410,7 @@
     </div>
   </section>
 
-  <section class="modal modal--hidden">
+  <section class="modal--success modal--hidden">
     <div class="modal__inner">
       <button class="modal__close" type="button">Закрыть окно</button>
       <h3 class="modal__title">Данные успешно отправлены!</h3>
@@ -483,6 +483,7 @@
     </div>
   </template>
 
+<script type="text/javascript" src="js/backend.js"></script>
 <script type="text/javascript" src="js/data.js"></script>
 <script type="text/javascript" src="js/goods.js"></script>
 <script type="text/javascript" src="js/filters.js"></script>
