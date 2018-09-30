@@ -2,15 +2,32 @@
 'use strict';
 (function () {
   var cardNumberInput = document.querySelector('#payment__card-number'); // инупут для ввода номера карты
+  var paymentToggle = document.querySelector('.payment__method');
+  var btnPaymentCard = paymentToggle.querySelector('#payment__card');
+  var btnPaymentCash = paymentToggle.querySelector('#payment__cash');
+  var paymentByCardTab = document.querySelector('.payment__card-wrap');
+  var paymentByCashTab = document.querySelector('.payment__cash-wrap');
 
-  // добавим валидацию карты на поле с номером карты
-  cardNumberInput.addEventListener('blur', function () {
+  var onPaymentToggleClick = function (evt) { // переключение метода оплаты по клику на кнопку
+    if (evt.target === btnPaymentCard) {
+      paymentByCardTab.classList.remove('visually-hidden');
+      paymentByCashTab.classList.add('visually-hidden');
+    }
+    if (evt.target === btnPaymentCash) {
+      paymentByCashTab.classList.remove('visually-hidden');
+      paymentByCardTab.classList.add('visually-hidden');
+    }
+  };
+
+  cardNumberInput.addEventListener('blur', function () { // добавим валидацию карты на поле с номером карты
     if (window.payments.checkCardNumber()) {
       document.querySelector('.payment__card-status').textContent = 'номер введен верно';
     } else {
       document.querySelector('.payment__card-status').textContent = 'c карточкой проблема';
     }
   });
+
+  paymentToggle.addEventListener('click', onPaymentToggleClick); // добавим разделу выбора метода оплаты обработчик
 
   window.payments = {
     checkCardNumber: function () {
