@@ -5,8 +5,6 @@
   var goodsCards = document.querySelector('.goods__cards');
   var busketInHeader = document.querySelector('.main-header__basket');
   var formOrder = document.querySelectorAll('form')[1];
-  var btnSubmit = document.querySelector('.buy__submit-btn');
-
 
   // обработчик кликов по элементам карточки в корзине
   var onOrderCardClick = function (evt) {
@@ -45,9 +43,8 @@
   };
   // функция показа окна при успехе
 
-  // обработчик кликов по кнопке Заказать
-  var onBtnSubmitClick = function (evt) {
-    // evt.preventDefault(); // убираем действие по умолчанию
+  // обработчик события "отправить" на форме заказа
+  var onFormOrderSubmit = function (evt) {
     if (formOrder.checkValidity()) { // проверим, заполнена ли форма правильно, и номер карты верный
       evt.preventDefault();
       window.backend.sendFormData(window.backend.showSuccess, window.backend.showError, new FormData(formOrder)); // отправляем данные
@@ -55,13 +52,10 @@
       document.querySelector('.payment__card-status').textContent = 'не определен'; // возвращаем текст про номер карты
       document.querySelector('.payment__card-wrap').classList.remove('visually-hidden'); // скрываем вкладку наличные
       document.querySelector('.payment__cash-wrap').classList.add('visually-hidden'); // выводим вкладку оплата картой
-    } else {
-      // console.log('форма не валидна');
     }
-
   };
 
-  btnSubmit.addEventListener('click', onBtnSubmitClick); // вешаем обработчик на кнопку отправить
+  formOrder.addEventListener('submit', onFormOrderSubmit); // добавляем обработчик события отправить на форму
 
   // экспорт:
   window.busket = {
