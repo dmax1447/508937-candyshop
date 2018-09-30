@@ -56,7 +56,7 @@
       document.querySelector('.payment__card-wrap').classList.remove('visually-hidden'); // скрываем вкладку наличные
       document.querySelector('.payment__cash-wrap').classList.add('visually-hidden'); // выводим вкладку оплата картой
     } else {
-      console.log('форма не валидна');
+      // console.log('форма не валидна');
     }
 
   };
