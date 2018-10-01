@@ -12,20 +12,14 @@
   var priceMin = 100;
   var priceMax = 1500;
   var pinSize = 10;
-  // выставим начальные значения пина и бара;
-  leftPin.style.left = 0;
-  rightPin.style.right = 0;
-  rangeFillLine.style.left = (leftPin.offsetLeft) + pinSize + 'px';
-  rangeFillLine.style.right = pinSize + 'px';
-  rangePriceMin.textContent = priceMin;
-  rangePriceMax.textContent = priceMax;
 
+  // функция расчета цены по положению пина
   var calculatePrice = function (x) {
     var relativePositionInPercent = Math.round((x * 100) / (range - pinSize)); // вычисляю положение в % от начала
     return Math.round((priceMax - priceMin) * (relativePositionInPercent / 100) + priceMin); // вычисляю цену
   };
 
-  // обработчик для пина пина
+  // обработчик перемещения пина
   var onPinMouseDown = function (downEvt) { // при нажатии запоминаем пин и его позицию
     var pin = downEvt.target;
     var pinStart = pin.offsetLeft;
@@ -51,6 +45,14 @@
     document.addEventListener('mousemove', onPinMouseMove); // запускаем обработчик "движение мыши"
     document.addEventListener('mouseup', onPinMouseUp); // запускаем обработчик "отпускание кнопки мыши"
   };
+
+  // выставим начальные значения пина и бара;
+  leftPin.style.left = 0;
+  rightPin.style.right = 0;
+  rangeFillLine.style.left = (leftPin.offsetLeft) + pinSize + 'px';
+  rangeFillLine.style.right = pinSize + 'px';
+  rangePriceMin.textContent = priceMin;
+  rangePriceMax.textContent = priceMax;
 
   // добавляем обработчики
   leftPin.addEventListener('mousedown', onPinMouseDown); // добавляем обработчик "нажатие кнопки мыши" на левый пин
