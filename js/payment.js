@@ -7,23 +7,24 @@
   var btnPaymentCash = paymentToggle.querySelector('#payment__cash');
   var paymentByCardTab = document.querySelector('.payment__card-wrap');
   var paymentByCashTab = document.querySelector('.payment__cash-wrap');
+  var paymentCardBlock = document.querySelector('.payment__card-wrap');
+  var paymentCardInputs = paymentCardBlock.querySelectorAll('input');
+
 
   var onPaymentToggleClick = function (evt) { // переключение метода оплаты по клику на кнопку
-    if (evt.target === btnPaymentCard) {
-      paymentByCardTab.classList.remove('visually-hidden');
-      paymentByCashTab.classList.add('visually-hidden');
-      document.querySelector('#payment__card-number').setAttribute('required', '');
-      document.querySelector('#payment__card-date').setAttribute('required', '');
-      document.querySelector('#payment__card-cvc').setAttribute('required', '');
-      document.querySelector('#payment__cardholder').setAttribute('required', '');
+    if (evt.target === btnPaymentCard) { // если выбрана оплата картой
+      paymentByCardTab.classList.remove('visually-hidden'); // таб оплата картой показываем
+      paymentByCashTab.classList.add('visually-hidden'); // таб оплата налом скрываем
+      for (var i = 0; i < paymentCardInputs.length; i++) {
+        paymentCardInputs[i].removeAttribute('disabled'); // включаем инпуты оплаты картой
+      }
     }
-    if (evt.target === btnPaymentCash) {
+    if (evt.target === btnPaymentCash) { // если нал - все наооброт
       paymentByCashTab.classList.remove('visually-hidden');
       paymentByCardTab.classList.add('visually-hidden');
-      document.querySelector('#payment__card-number').removeAttribute('required');
-      document.querySelector('#payment__card-date').removeAttribute('required');
-      document.querySelector('#payment__card-cvc').removeAttribute('required');
-      document.querySelector('#payment__cardholder').removeAttribute('required');
+      for (i = 0; i < paymentCardInputs.length; i++) {
+        paymentCardInputs[i].setAttribute('disabled', '');
+      }
     }
   };
 
