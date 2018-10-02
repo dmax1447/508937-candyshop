@@ -68,7 +68,7 @@
       card.querySelector('.card-order__title').textContent = cardData.name;
       card.querySelector('.card-order__img').src = 'img/cards/' + cardData.picture;
       card.querySelector('.card-order__img').alt = cardData.name;
-      card.querySelector('.card-order__price').textContent = cardData.price;
+      card.querySelector('.card-order__price').textContent = cardData.price + ' ₽';
       card.querySelector('.card-order__count').value = cardData.orderCount;
       // добавим обработчик кликов по карточке
       card.addEventListener('click', onOrderCardClick);

@@ -17,6 +17,8 @@
   var goodsCards = document.querySelector('.goods__cards'); // блок товары в корзине
   var catalogLoad = document.querySelector('.catalog__load'); // блок уведомления о загрузке
   var busketInHeader = document.querySelector('.main-header__basket'); // корзинка в заголовке
+  var rangePriceMin = document.querySelector('.range__price--min'); // поле цены левого пина
+  var rangePriceMax = document.querySelector('.range__price--max'); // поле цены правого пина
 
   // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
   var findItemById = function (idValue, list) {
@@ -99,23 +101,51 @@
     return card;
   };
 
-  // Функция для отрисовки каталога
+  // Функция для отрисовки каталога, вернет подгтовленный каталог по входным данным
   var renderCatalog = function (cardsData) {
-    window.data.goodsInCatalog = cardsData; // сохраним полученные данные для дальнейшей работы
     var catalogFragment = document.createDocumentFragment(); // создаем пустой фрагмент
     for (var i = 0; i < cardsData.length; i++) {
-      window.data.goodsInCatalog[i].id = i;
       var card = renderCard(i, cardsData[i]);
       catalogFragment.appendChild(card); // вставляем сгенерированный по данным элемент(волшебника) в пустой фрагмент
     }
+    return catalogFragment; // вернем подготовленный каталог
+  };
+
+  var clearCatalog = function () {
+    var cards = document.querySelectorAll('.catalog__card');
+    for (var i = 0; i < cards.length; i++) {
+      catalogCards.removeChild(cards[i]);
+    }
+  };
+
+  // Коллбек на загрузку списка товаров с сервера
+  var onCatalogLoad = function (cardsData) {
+    for (var i = 0; i < cardsData.length; i++) { // обработаем входные данные
+      cardsData[i].id = i; // добавим идентификатор id каждой записи
+      cardsData[i].isFavorite = false; // и поле избранное
+    }
+    window.data.goodsInCatalog = cardsData.slice(); // сохраним копию данных для дальнейшей работы
+    var catalogFragment = renderCatalog(cardsData); // рендерим каталог по полученным данным
     catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
     catalogLoad.classList.add('visually-hidden'); // блок catalog__load скроем, добавив класс visually-hidden
     catalogCards.appendChild(catalogFragment);
+    goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
+    document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
+    window.filters.minPrice = window.filters.findMinPrice(window.data.goodsInCatalog); // сохраним нижнюю границу цены
+    window.filters.maxPrice = window.filters.findMaxPrice(window.data.goodsInCatalog); // сохраним верхнюю границу цены
+    window.filters.minFilterPrice = window.filters.minPrice; // начальное минимальное значение фильтра = мин цена
+    window.filters.maxFilterPrice = window.filters.maxPrice; // начальное максимальное значение фильтра = макс цена
+    rangePriceMin.textContent = window.filters.minPrice;
+    rangePriceMax.textContent = window.filters.maxPrice;
   };
 
+  // пытаемся загрузить каталог, если удачно - то рендерим в список, если нет то выводим сообщение об ошибке
+  window.backend.loadCatalog(onCatalogLoad, window.backend.showError);
 
-  window.backend.loadCatalog(renderCatalog, window.backend.showError); // пытаемся загрузить каталог, если удачно - то рендерим в список, если нет то выводим сообщение об ошибке
-  goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
-  document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
+  // экспорт:
+  window.goods = {
+    renderCatalog: renderCatalog,
+    clearCatalog: clearCatalog
+  };
 
 })();

@@ -5,6 +5,7 @@
   // экспортируемые данные:
   window.data = {
     goodsInCatalog: [],
+    goodsFiltered: [],
     goodsInOrder: [],
     findItemById: function (idValue, list) {
       var idValueInt = parseInt(idValue, 10);
