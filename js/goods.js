@@ -66,6 +66,12 @@
       evt.preventDefault();
       btnFavorite.classList.toggle('card__btn-favorite--selected');
       btnFavorite.blur();
+      if (goodsInCatalogItem.isFavorite) {
+        goodsInCatalogItem.isFavorite = false;
+      } else {
+        goodsInCatalogItem.isFavorite = true;
+      }
+
     }
   };
 
