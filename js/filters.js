@@ -12,7 +12,10 @@
   var pinSize = 10;
   var catalogCards = document.querySelector('.catalog__cards'); // блок каталог товаров
   var filterForm = document.querySelector('form'); // форма фильтра
+  var DEBOUNCE_INTERVAL = 1000;
+  var lastTimeout;
 
+  // объект для сохрания состояния фильтра
   var filterState = {
     'icecream': false,
     'soda': false,
@@ -32,12 +35,21 @@
     'maxPrice': 90
   };
 
+  // мапа соответствия тип товара в базе и типа выбранного фильтра
   var kindOfGoodToFilterValue = {
     'Мороженое': 'icecream',
     'Газировка': 'soda',
     'Жевательная резинка': 'gum',
     'Мармелад': 'marmalade',
     'Зефир': 'marshmallows'
+  };
+
+  // функция debounce
+  var debounce = function (fun) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
   };
 
   // функция расчета цены по положению пина
@@ -50,6 +62,7 @@
     var emptyFiltersMessage = emptyFiltersTemplate.querySelector('.catalog__empty-filter');
     catalogCards.appendChild(emptyFiltersMessage);
   };
+
 
   var updateFilterState = function () {
     filterState['groupKindActive'] = false; // сбросим состояние активности у групп фильтра
@@ -217,7 +230,8 @@
     updateFilterState();
     window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections);
     window.data.goodsFiltered.sort(sortByFormSelection);
-    refreshCatalog(window.data.goodsFiltered);
+    debounce(refreshCatalog(window.data.goodsFiltered));
+    // refreshCatalog(window.data.goodsFiltered);
   };
 
   // обработчик кнопки сбросить на форме
