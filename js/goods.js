@@ -91,7 +91,12 @@
       } else {
         goodsInCatalogItem.isFavorite = true;
       }
-
+      var favorite = catalogData.filter(
+          function (item) {
+            return item.isFavorite;
+          }
+      );
+      document.querySelectorAll('span.input-btn__item-count')[8].textContent = '(' + favorite.length + ')';
     }
   };
   // отприсовка карточки в каталоге
@@ -161,10 +166,11 @@
     catalogCards.appendChild(catalogFragment);
     goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
     document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
-    window.filters.minPrice = findMinPrice(window.data.goodsInCatalog); // сохраним нижнюю границу цены
-    window.filters.maxPrice = findMaxPrice(window.data.goodsInCatalog);
-    rangePriceMin.textContent = window.filters.minPrice;
-    rangePriceMax.textContent = window.filters.maxPrice;
+    window.data.minPrice = findMinPrice(window.data.goodsInCatalog); // сохраним нижнюю границу цены
+    window.data.maxPrice = findMaxPrice(window.data.goodsInCatalog);
+    rangePriceMin.textContent = window.data.minPrice;
+    rangePriceMax.textContent = window.data.maxPrice;
+    window.data.initSlider(); // выставляем начальные значния слайдера
     window.data.initFilterCounters(window.data.goodsInCatalog);
   };
 

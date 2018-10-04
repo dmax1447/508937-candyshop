@@ -11,7 +11,10 @@
   var rangeFillLine = catalogFilterRange.querySelector('.range__fill-line'); // полоска между пинами
   var pinSize = 10;
   var catalogCards = document.querySelector('.catalog__cards'); // блок каталог товаров
-  var filterForm = document.querySelector('form');
+  var filterForm = document.querySelector('form'); // форма фильтра
+  // var emptyFiltersTemplate = document.querySelector('#empty-filters'); // форма ошибки при слишком строгом фильтре
+  // var emptyFiltersMessage1 = document.querySelector('.catalog__empty-filter');
+  // var emptyFiltersMessage2 = document.querySelector('.catalog__empty-filter');
   var filterState = {
     'icecream': false,
     'soda': false,
@@ -39,17 +42,10 @@
     'Зефир': 'marshmallows'
   };
 
-  // выставим начальные значения пина и бара;
-  leftPin.style.left = 0;
-  rightPin.style.right = 0;
-  rangeFillLine.style.left = (leftPin.offsetLeft) + pinSize + 'px';
-  rangeFillLine.style.right = pinSize + 'px';
-
-
   // функция расчета цены по положению пина
   var calculatePrice = function (x) {
     var relativePositionInPercent = Math.round((x * 100) / (range - pinSize)); // вычисляю положение в % от начала
-    return Math.round((window.filters.maxPrice - window.filters.minPrice) * (relativePositionInPercent / 100) + window.filters.minPrice); // вычисляю цену
+    return Math.round((window.data.maxPrice - window.data.minPrice) * (relativePositionInPercent / 100) + window.data.minPrice); // вычисляю цену
   };
 
   var updateFilterState = function () {
@@ -201,8 +197,8 @@
     var onPinMouseUp = function () {
       // перерисовываем каталог по условию фильтра
       window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections);
-      window.data.initFilterCounters(window.data.goodsFiltered);
       refreshCatalog(window.data.goodsFiltered);
+      document.querySelector('span.range__count').textContent = '(' + window.data.goodsFiltered.length + ')';
       // описываем обработчик отпускания мыши
       document.removeEventListener('mousemove', onPinMouseMove); // удаляем обработчик "движение мыши"
       document.removeEventListener('mouseup', onPinMouseUp); // удаляем обработчик "отпускание кнопки мыши"
@@ -217,8 +213,16 @@
     updateFilterState();
     window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections);
     window.data.goodsFiltered.sort(sortByFormSelection);
-    window.data.initFilterCounters(window.data.goodsFiltered);
     refreshCatalog(window.data.goodsFiltered);
+  };
+
+  // обработчик кнопки сбросить на форме
+  var onFormSubmit = function (evt) {
+    evt.preventDefault();
+    filterForm.reset();
+    refreshCatalog(window.data.goodsInCatalog);
+    window.data.initSlider(); // сбрасываем слайдер
+    document.querySelector('span.range__count').textContent = '(' + window.data.goodsInCatalog.length + ')'; // сбрасываем значения цена: ()
   };
 
   // фуннкция обновления каталога
@@ -228,18 +232,11 @@
     catalogCards.appendChild(refreshedCatalog); // вставляем его на страницу
   };
 
-  // обработчик кнопки сбросить на форме
-  var onFormSubmit = function (evt) {
-    evt.preventDefault();
-    filterForm.reset();
-    refreshCatalog(window.data.goodsInCatalog);
-  };
-
-  // добавляем обработчики на пины слайдера цены
-  leftPin.addEventListener('mousedown', onPinMouseDown); // добавляем обработчик "нажатие кнопки мыши" на левый пин
-  rightPin.addEventListener('mousedown', onPinMouseDown); // добавляем обработчик "нажатие кнопки мыши" на правый пин
-  filterForm.addEventListener('change', onFormChange);
-  filterForm.addEventListener('submit', onFormSubmit);
+  // добавляем обработчики
+  leftPin.addEventListener('mousedown', onPinMouseDown); // нажатие кнопки мыши на левый пин
+  rightPin.addEventListener('mousedown', onPinMouseDown); // нажатие кнопки мыши на правый пин
+  filterForm.addEventListener('change', onFormChange); // на изменения в форме фильтра
+  filterForm.addEventListener('submit', onFormSubmit); // на кнопку показать все в фильтре
 
   window.filters = {
     minPrice: null,

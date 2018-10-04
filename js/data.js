@@ -7,6 +7,8 @@
     goodsInCatalog: [],
     goodsFiltered: [],
     goodsInOrder: [],
+    minPrice: null,
+    maxPrice: null,
     findItemById: function (idValue, list) {
       var idValueInt = parseInt(idValue, 10);
       for (var i = 0; i < list.length; i++) {
@@ -48,6 +50,15 @@
       filterCounters[9].textContent = '(' + inStock.length + ')';
       // пишем общее количество товаров
       document.querySelector('span.range__count').textContent = '(' + catalogData.length + ')';
+    },
+    initSlider: function () {
+      var pinSize = 10;
+      document.querySelector('.range__btn--left').style.left = 0;
+      document.querySelector('.range__btn--right').style.left = '235px';
+      document.querySelector('.range__fill-line').style.left = pinSize + 'px';
+      document.querySelector('.range__fill-line').style.right = pinSize + 'px';
+      document.querySelector('.range__price--min').textContent = window.data.minPrice;
+      document.querySelector('.range__price--max').textContent = window.data.maxPrice;
     }
   };
 
