@@ -12,9 +12,7 @@
   var pinSize = 10;
   var catalogCards = document.querySelector('.catalog__cards'); // блок каталог товаров
   var filterForm = document.querySelector('form'); // форма фильтра
-  // var emptyFiltersTemplate = document.querySelector('#empty-filters'); // форма ошибки при слишком строгом фильтре
-  // var emptyFiltersMessage1 = document.querySelector('.catalog__empty-filter');
-  // var emptyFiltersMessage2 = document.querySelector('.catalog__empty-filter');
+
   var filterState = {
     'icecream': false,
     'soda': false,
@@ -47,13 +45,16 @@
     var relativePositionInPercent = Math.round((x * 100) / (range - pinSize)); // вычисляю положение в % от начала
     return Math.round((window.data.maxPrice - window.data.minPrice) * (relativePositionInPercent / 100) + window.data.minPrice); // вычисляю цену
   };
+  var showEmptyFilterMessage = function () {
+    var emptyFiltersTemplate = document.querySelector('#empty-filters').content.cloneNode(true); // форма ошибки при слишком строгом фильтре
+    var emptyFiltersMessage = emptyFiltersTemplate.querySelector('.catalog__empty-filter');
+    catalogCards.appendChild(emptyFiltersMessage);
+  };
 
   var updateFilterState = function () {
-
     filterState['groupKindActive'] = false; // сбросим состояние активности у групп фильтра
     filterState['groupNutritionActive'] = false;
     filterState['groupFavoriteAmountActive'] = false;
-
     for (var i = 0; i <= 4; i++) { // проверяем группу инпутов "вид товара"
       var fieldName = filterForm[i].value; // читаем название инпута и пишем в поле имя свойства объекта
       var fieldState = filterForm[i].checked; // читаем состояние инпута и пишем в значение свойства объекта
@@ -198,6 +199,9 @@
       // перерисовываем каталог по условию фильтра
       window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections);
       refreshCatalog(window.data.goodsFiltered);
+      if (window.data.goodsFiltered.length === 0) {
+        showEmptyFilterMessage();
+      }
       document.querySelector('span.range__count').textContent = '(' + window.data.goodsFiltered.length + ')';
       // описываем обработчик отпускания мыши
       document.removeEventListener('mousemove', onPinMouseMove); // удаляем обработчик "движение мыши"

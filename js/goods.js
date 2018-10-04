@@ -151,6 +151,10 @@
     for (var i = 0; i < cards.length; i++) {
       catalogCards.removeChild(cards[i]);
     }
+    var errorMessage = document.querySelector('.catalog__empty-filter');
+    if (errorMessage !== null) {
+      catalogCards.removeChild(errorMessage);
+    }
   };
 
   // Коллбек на загрузку списка товаров с сервера
