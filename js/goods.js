@@ -182,7 +182,7 @@
   // экспорт:
   window.goods = {
     renderCatalog: renderCatalog,
-    clearCatalog: clearCatalog,
+    clearCatalog: clearCatalog
   };
 
 })();

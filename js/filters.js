@@ -253,6 +253,7 @@
     evt.preventDefault();
     filterForm.reset();
     debounce(refreshOnFilterChange);
+    window.data.initSlider();
   };
 
   // функция обновляет каталог, счетчики, данных о фильтрах
