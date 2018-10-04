@@ -20,6 +20,7 @@
   var rangePriceMin = document.querySelector('.range__price--min'); // поле цены левого пина
   var rangePriceMax = document.querySelector('.range__price--max'); // поле цены правого пина
 
+  // поиск минимальной цены в каталоге
   var findMinPrice = function (catalogData) {
     var min = catalogData[0].price;
     for (var i = 0; i < catalogData.length; i++) {
@@ -30,6 +31,7 @@
     return min;
   };
 
+  // поиск максиальной цены в каталоге
   var findMaxPrice = function (catalogData) {
     var max = catalogData[0].price;
     for (var i = 0; i < catalogData.length; i++) {
@@ -80,9 +82,9 @@
       }
       busketInHeader.textContent = 'В корзине: ' + orderData.length;
 
+
     }
-    // обработаем клик по кнопке в избранное
-    if (evt.target === btnFavorite) {
+    if (evt.target === btnFavorite) { // обработаем клик по кнопке в избранное
       evt.preventDefault();
       btnFavorite.classList.toggle('card__btn-favorite--selected');
       btnFavorite.blur();
@@ -91,16 +93,11 @@
       } else {
         goodsInCatalogItem.isFavorite = true;
       }
-      var favorite = catalogData.filter(
-          function (item) {
-            return item.isFavorite;
-          }
-      );
-      document.querySelectorAll('span.input-btn__item-count')[8].textContent = '(' + favorite.length + ')';
+      window.data.updateFavoriteCounter(window.data.goodsInCatalog);
     }
   };
   // отприсовка карточки в каталоге
-  var renderCard = function (id, cardData) {
+  var renderCard = function (cardData) {
     var cardTemplate = document.querySelector('#card').content.cloneNode(true); // находим и сохраняем шаблон
     var card = cardTemplate.querySelector('.catalog__card');
     var sugar = cardData.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
@@ -108,7 +105,7 @@
     card.classList.remove('card--in-stock');
     card.querySelector('.stars__rating').classList.remove('stars__rating--five');
     // добавляем данные
-    card.setAttribute('id', id); // добавим карточке id
+    card.setAttribute('id', cardData.id); // добавим карточке id
     card.querySelector('.card__title').textContent = cardData.name;
     card.querySelector('.card__img').src = 'img/cards/' + cardData.picture;
     switch (cardData.amount) {
@@ -140,7 +137,7 @@
   var renderCatalog = function (cardsData) {
     var catalogFragment = document.createDocumentFragment(); // создаем пустой фрагмент
     for (var i = 0; i < cardsData.length; i++) {
-      var card = renderCard(i, cardsData[i]);
+      var card = renderCard(cardsData[i]);
       catalogFragment.appendChild(card); // вставляем сгенерированный по данным элемент(волшебника) в пустой фрагмент
     }
     return catalogFragment; // вернем подготовленный каталог
@@ -164,6 +161,7 @@
       cardsData[i].isFavorite = false; // и поле избранное
     }
     window.data.goodsInCatalog = cardsData.slice(); // сохраним копию данных для дальнейшей работы
+    window.data.goodsInCatalogOrigin = cardsData.slice(); // сохраним копию данных для восттановления
     var catalogFragment = renderCatalog(cardsData); // рендерим каталог по полученным данным
     catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
     catalogLoad.classList.add('visually-hidden'); // блок catalog__load скроем, добавив класс visually-hidden
@@ -185,8 +183,6 @@
   window.goods = {
     renderCatalog: renderCatalog,
     clearCatalog: clearCatalog,
-    minPriceOnLoad: null,
-    maxPriceOnLoad: null
   };
 
 })();

@@ -12,7 +12,7 @@
   var pinSize = 10;
   var catalogCards = document.querySelector('.catalog__cards'); // блок каталог товаров
   var filterForm = document.querySelector('form'); // форма фильтра
-  var DEBOUNCE_INTERVAL = 1000;
+  var DEBOUNCE_INTERVAL = 500;
   var lastTimeout;
 
   // объект для сохрания состояния фильтра
@@ -57,13 +57,15 @@
     var relativePositionInPercent = Math.round((x * 100) / (range - pinSize)); // вычисляю положение в % от начала
     return Math.round((window.data.maxPrice - window.data.minPrice) * (relativePositionInPercent / 100) + window.data.minPrice); // вычисляю цену
   };
+
+  // функция показывает сообщение об ошибке строгих фильтров
   var showEmptyFilterMessage = function () {
-    var emptyFiltersTemplate = document.querySelector('#empty-filters').content.cloneNode(true); // форма ошибки при слишком строгом фильтре
+    var emptyFiltersTemplate = document.querySelector('#empty-filters').content.cloneNode(true);
     var emptyFiltersMessage = emptyFiltersTemplate.querySelector('.catalog__empty-filter');
     catalogCards.appendChild(emptyFiltersMessage);
   };
 
-
+  // функция сохраняет состояние фильтра в объект для работы сортировки и фильрации
   var updateFilterState = function () {
     filterState['groupKindActive'] = false; // сбросим состояние активности у групп фильтра
     filterState['groupNutritionActive'] = false;
@@ -100,7 +102,7 @@
     }
   };
 
-  // фильтр каталога по значениям чекбоксов и цены
+  // фильтр данных каталога по значениям фильров в filterState
   var filterByFormSelections = function (item) {
     // свойства товара для фильтрации
     var isFilterPassed = false; // флаг соответствия фильтру
@@ -148,7 +150,7 @@
     return isFilterPassed && isPriceMatched;
   };
 
-  // сортировка по данным формы
+  // сортировка данных каталога. тип сортировки берем из filterState
   var sortByFormSelection = function (item1, item2) {
     // если выбрана сортировка "сначала дорогие"
     if (filterState.sortOrder === 'expensive') {
@@ -170,19 +172,29 @@
     }
     // если выбрана сортировка "по рейтингу"
     if (filterState.sortOrder === 'rating') {
-      if (item2.rating.number > item1.rating.number) {
-        return 1;
-      }
-      if (item2.rating.number < item1.rating.number) {
-        return -1;
-      }
-    }
-    // если выбрана сортировка "сначала популярные"
-    if (filterState.sortOrder === 'popular') {
       if (item2.rating.value > item1.rating.value) {
         return 1;
       }
       if (item2.rating.value < item1.rating.value) {
+        return -1;
+      }
+      if (item2.rating.value === item1.rating.value) {
+        if (item2.rating.number > item1.rating.number) {
+          return 1;
+        }
+        if (item2.rating.number < item1.rating.number) {
+          return -1;
+        } else {
+          return 0;
+        }
+      }
+    }
+    // если выбрана сортировка "сначала популярные"
+    if (filterState.sortOrder === 'popular') {
+      if (item2.id < item1.id) {
+        return 1;
+      }
+      if (item2.id > item1.id) {
         return -1;
       }
     }
@@ -209,14 +221,7 @@
       }
     };
     var onPinMouseUp = function () {
-      // перерисовываем каталог по условию фильтра
-      window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections);
-      refreshCatalog(window.data.goodsFiltered);
-      if (window.data.goodsFiltered.length === 0) {
-        showEmptyFilterMessage();
-      }
-      document.querySelector('span.range__count').textContent = '(' + window.data.goodsFiltered.length + ')';
-      // описываем обработчик отпускания мыши
+      debounce(refreshOnFilterChange); // обновляем информацию о каталоге
       document.removeEventListener('mousemove', onPinMouseMove); // удаляем обработчик "движение мыши"
       document.removeEventListener('mouseup', onPinMouseUp); // удаляем обработчик "отпускание кнопки мыши"
     };
@@ -224,26 +229,47 @@
     document.addEventListener('mouseup', onPinMouseUp); // запускаем обработчик "отпускание кнопки мыши"
   };
 
-  // обработчик взаимодействий с чекбоксами формы фильтра
-  var onFormChange = function () {
+  // обработчик изменений фильтра
+  var onFormChange = function (evt) {
     // соберем данные для фильтра
-    updateFilterState();
-    window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections);
-    window.data.goodsFiltered.sort(sortByFormSelection);
-    debounce(refreshCatalog(window.data.goodsFiltered));
-    // refreshCatalog(window.data.goodsFiltered);
+    var filterFavoriteInput = document.querySelector('#filter-favorite');
+    var filterAvailabilityInput = document.querySelector('#filter-availability');
+    if (evt.target === filterFavoriteInput && filterAvailabilityInput.checked) {
+      filterAvailabilityInput.checked = false;
+    }
+    if (evt.target === filterAvailabilityInput && filterFavoriteInput.checked) {
+      filterFavoriteInput.checked = false;
+    }
+    if (evt.target === filterAvailabilityInput || evt.target === filterFavoriteInput) {
+      for (var i = 0; i <= 8; i++) {
+        filterForm[i].checked = false;
+      }
+    }
+    debounce(refreshOnFilterChange);
   };
 
-  // обработчик кнопки сбросить на форме
+  // обработчик кнопки "показать все" в фильтрах
   var onFormSubmit = function (evt) {
     evt.preventDefault();
     filterForm.reset();
-    refreshCatalog(window.data.goodsInCatalog);
-    window.data.initSlider(); // сбрасываем слайдер
-    document.querySelector('span.range__count').textContent = '(' + window.data.goodsInCatalog.length + ')'; // сбрасываем значения цена: ()
+    debounce(refreshOnFilterChange);
   };
 
-  // фуннкция обновления каталога
+  // функция обновляет каталог, счетчики, данных о фильтрах
+  var refreshOnFilterChange = function () {
+    updateFilterState(); // обновляем данные о состоянии фильтров
+    window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections); // прогняем данные через фильтр (согласно состоянию фильтров)
+    window.data.goodsFiltered.sort(sortByFormSelection); // сортируем данные (согласно состоянию фильтров)
+    refreshCatalog(window.data.goodsFiltered); // отрисовываем карточки заново
+    document.querySelector('span.range__count').textContent = '(' + window.data.goodsFiltered.length + ')'; // обновляем счетчик товаров в диапазоне
+    window.data.updateInStockCounter(window.data.goodsFiltered); // обновляем счетчик товара в наличии
+    window.data.updateFavoriteCounter(window.data.goodsFiltered); // обновляем счетчик товаров в избранном
+    if (window.data.goodsFiltered.length === 0) { // если фильтры слишком строгие
+      showEmptyFilterMessage(); // показываем сообщение
+    }
+  };
+
+  // фуннкция рендера каталога
   var refreshCatalog = function (data) {
     window.goods.clearCatalog(); // очищаем каталог
     var refreshedCatalog = window.goods.renderCatalog(data); // рендерим новый каталог по фильтрованным данным
@@ -255,10 +281,5 @@
   rightPin.addEventListener('mousedown', onPinMouseDown); // нажатие кнопки мыши на правый пин
   filterForm.addEventListener('change', onFormChange); // на изменения в форме фильтра
   filterForm.addEventListener('submit', onFormSubmit); // на кнопку показать все в фильтре
-
-  window.filters = {
-    minPrice: null,
-    maxPrice: null,
-  };
 
 })();

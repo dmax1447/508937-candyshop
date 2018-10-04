@@ -59,6 +59,22 @@
       document.querySelector('.range__fill-line').style.right = pinSize + 'px';
       document.querySelector('.range__price--min').textContent = window.data.minPrice;
       document.querySelector('.range__price--max').textContent = window.data.maxPrice;
+    },
+    updateFavoriteCounter: function (catalogData) {
+      var favorite = catalogData.filter(
+          function (item) {
+            return item.isFavorite;
+          }
+      );
+      document.querySelectorAll('span.input-btn__item-count')[8].textContent = '(' + favorite.length + ')';
+    },
+    updateInStockCounter: function (catalogData) {
+      var inStock = catalogData.filter(
+          function (item) {
+            return (item.amount > 0);
+          }
+      );
+      document.querySelectorAll('span.input-btn__item-count')[9].textContent = '(' + inStock.length + ')';
     }
   };
 
