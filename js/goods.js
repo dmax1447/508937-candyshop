@@ -20,6 +20,25 @@
   var rangePriceMin = document.querySelector('.range__price--min'); // поле цены левого пина
   var rangePriceMax = document.querySelector('.range__price--max'); // поле цены правого пина
 
+  var findMinPrice = function (catalogData) {
+    var min = catalogData[0].price;
+    for (var i = 0; i < catalogData.length; i++) {
+      if (catalogData[i].price < min) {
+        min = catalogData[i].price;
+      }
+    }
+    return min;
+  };
+
+  var findMaxPrice = function (catalogData) {
+    var max = catalogData[0].price;
+    for (var i = 0; i < catalogData.length; i++) {
+      if (catalogData[i].price > max) {
+        max = catalogData[i].price;
+      }
+    }
+    return max;
+  };
   // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
   var findItemById = function (idValue, list) {
     var idValueInt = parseInt(idValue, 10);
@@ -103,6 +122,10 @@
     card.querySelector('.star__count').textContent = '( ' + cardData.rating.number + ' )';
     card.querySelector('.card__characteristic').textContent = sugar;
     card.querySelector('.card__composition-list').textContent = cardData.nutritionFacts.contents;
+    if (cardData.isFavorite) {
+      var btnFavorite = card.querySelector('.card__btn-favorite');
+      btnFavorite.classList.toggle('card__btn-favorite--selected');
+    }
     card.addEventListener('click', onCatalogCardClick); // добавим обработчик клика на карточку товара
     return card;
   };
@@ -137,10 +160,8 @@
     catalogCards.appendChild(catalogFragment);
     goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
     document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
-    window.filters.minPrice = window.filters.findMinPrice(window.data.goodsInCatalog); // сохраним нижнюю границу цены
-    window.filters.maxPrice = window.filters.findMaxPrice(window.data.goodsInCatalog); // сохраним верхнюю границу цены
-    window.filters.minFilterPrice = window.filters.minPrice; // начальное минимальное значение фильтра = мин цена
-    window.filters.maxFilterPrice = window.filters.maxPrice; // начальное максимальное значение фильтра = макс цена
+    window.filters.minPrice = findMinPrice(window.data.goodsInCatalog); // сохраним нижнюю границу цены
+    window.filters.maxPrice = findMaxPrice(window.data.goodsInCatalog);
     rangePriceMin.textContent = window.filters.minPrice;
     rangePriceMax.textContent = window.filters.maxPrice;
   };
@@ -151,7 +172,9 @@
   // экспорт:
   window.goods = {
     renderCatalog: renderCatalog,
-    clearCatalog: clearCatalog
+    clearCatalog: clearCatalog,
+    minPriceOnLoad: null,
+    maxPriceOnLoad: null
   };
 
 })();

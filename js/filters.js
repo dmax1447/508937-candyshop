@@ -10,7 +10,6 @@
   var rangePriceMax = catalogFilterRange.querySelector('.range__price--max'); // поле цены правого пина
   var rangeFillLine = catalogFilterRange.querySelector('.range__fill-line'); // полоска между пинами
   var pinSize = 10;
-  var cardsFiltered;
   var catalogCards = document.querySelector('.catalog__cards'); // блок каталог товаров
   var filterForm = document.querySelector('form');
   var filterState = {
@@ -28,12 +27,12 @@
     'favorite': false,
     'groupFavoriteAmountActive': false,
     'sortOrder': false,
-    'minPrice': null,
-    'maxPrice': null
+    'minPrice': 0,
+    'maxPrice': 90
   };
 
   var kindOfGoodToFilterValue = {
-    'Мороженное': 'icecream',
+    'Мороженое': 'icecream',
     'Газировка': 'soda',
     'Жевательная резинка': 'gum',
     'Мармелад': 'marmalade',
@@ -51,26 +50,6 @@
   var calculatePrice = function (x) {
     var relativePositionInPercent = Math.round((x * 100) / (range - pinSize)); // вычисляю положение в % от начала
     return Math.round((window.filters.maxPrice - window.filters.minPrice) * (relativePositionInPercent / 100) + window.filters.minPrice); // вычисляю цену
-  };
-
-  var findMinPrice = function (catalogData) {
-    var min = catalogData[0].price;
-    for (var i = 0; i < catalogData.length; i++) {
-      if (catalogData[i].price < min) {
-        min = catalogData[i].price;
-      }
-    }
-    return min;
-  };
-
-  var findMaxPrice = function (catalogData) {
-    var max = catalogData[0].price;
-    for (var i = 0; i < catalogData.length; i++) {
-      if (catalogData[i].price > max) {
-        max = catalogData[i].price;
-      }
-    }
-    return max;
   };
 
   var updateFilterState = function () {
@@ -109,16 +88,9 @@
         break;
       }
     }
-    // console.log('состояние фильтра:');
-    // console.dir(filterState);
   };
 
-  // // фильтр каталога по цене
-  // var filterByPrice = function (item) {
-  //   return (item.price >= filterState.minPrice && item.price <= filterState.maxPrice);
-  // };
-  // фильтр каталога по значениям чекбоксов
-  // возвращает true если элемент удовлетворяет всем условиям формы
+  // фильтр каталога по значениям чекбоксов и цены
   var filterByFormSelections = function (item) {
     // свойства товара для фильтрации
     var isFilterPassed = false; // флаг соответствия фильтру
@@ -148,12 +120,16 @@
     }
     isFilterPassed = isKindMatched && isNutritionMatched;
     // если включен фильтр избранное и товар в избранном - считаем фильтр пройденным
-    if (filterState.favorite && item.isFavorite) {
-      isFilterPassed = true;
+    if (filterState.favorite) {
+      return item.isFavorite;
     }
+    if (filterState.availability) {
+      return (item.amount > 0);
+    }
+
     // если включен фильтр наличие и количество товара > 0 то считаем фильтр пройденным
     if (filterState.availability && item.amount > 0) {
-      isFilterPassed = true;
+      return true;
     }
     // проверяем соответствует ли товар границам по цене
     if (item.price >= filterState.minPrice && item.price <= filterState.maxPrice) {
@@ -162,11 +138,45 @@
     return isFilterPassed && isPriceMatched;
   };
 
-  var sortByFormSelection = function (item) {
-    // свойства товара для сортировки
-    var price = item.price;
-    var popular = item.rating.number;
-    var ratingValue = item.rating.value;
+  // сортировка по данным формы
+  var sortByFormSelection = function (item1, item2) {
+    // если выбрана сортировка "сначала дорогие"
+    if (filterState.sortOrder === 'expensive') {
+      if (item2.price > item1.price) {
+        return 1;
+      }
+      if (item2.price < item1.price) {
+        return -1;
+      }
+    }
+    // если выбрана сортировка "сначала дешевые"
+    if (filterState.sortOrder === 'cheep') {
+      if (item2.price < item1.price) {
+        return 1;
+      }
+      if (item2.price > item1.price) {
+        return -1;
+      }
+    }
+    // если выбрана сортировка "по рейтингу"
+    if (filterState.sortOrder === 'rating') {
+      if (item2.rating.number > item1.rating.number) {
+        return 1;
+      }
+      if (item2.rating.number < item1.rating.number) {
+        return -1;
+      }
+    }
+    // если выбрана сортировка "сначала популярные"
+    if (filterState.sortOrder === 'popular') {
+      if (item2.rating.value > item1.rating.value) {
+        return 1;
+      }
+      if (item2.rating.value < item1.rating.value) {
+        return -1;
+      }
+    }
+    return 0;
   };
 
   // обработчик перемещения пина
@@ -205,9 +215,8 @@
     // соберем данные для фильтра
     updateFilterState();
     var goodsInCatalogFiltred = window.data.goodsInCatalog.filter(filterByFormSelections);
+    goodsInCatalogFiltred.sort(sortByFormSelection);
     refreshCatalog(goodsInCatalogFiltred);
-    // filtredGoods.sort(sortByFormSelection);
-    // console.dir(filtredGoods);
   };
 
   // фуннкция обновления каталога
@@ -220,7 +229,8 @@
   // обработчик кнопки сбросить на форме
   var onFormSubmit = function (evt) {
     evt.preventDefault();
-    // console.log('сброс формы');
+    filterForm.reset();
+    refreshCatalog(window.data.goodsInCatalog);
   };
 
   // добавляем обработчики на пины слайдера цены
@@ -230,12 +240,8 @@
   filterForm.addEventListener('submit', onFormSubmit);
 
   window.filters = {
-    findMinPrice: findMinPrice,
-    findMaxPrice: findMaxPrice,
     minPrice: null,
     maxPrice: null,
-    minFilterPrice: null,
-    maxFilterPrice: null
   };
 
 })();
