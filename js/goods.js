@@ -39,6 +39,7 @@
     }
     return max;
   };
+
   // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
   var findItemById = function (idValue, list) {
     var idValueInt = parseInt(idValue, 10);
@@ -93,7 +94,7 @@
 
     }
   };
-
+  // отприсовка карточки в каталоге
   var renderCard = function (id, cardData) {
     var cardTemplate = document.querySelector('#card').content.cloneNode(true); // находим и сохраняем шаблон
     var card = cardTemplate.querySelector('.catalog__card');
@@ -139,7 +140,7 @@
     }
     return catalogFragment; // вернем подготовленный каталог
   };
-
+  // функция очистки каталога
   var clearCatalog = function () {
     var cards = document.querySelectorAll('.catalog__card');
     for (var i = 0; i < cards.length; i++) {
@@ -164,6 +165,7 @@
     window.filters.maxPrice = findMaxPrice(window.data.goodsInCatalog);
     rangePriceMin.textContent = window.filters.minPrice;
     rangePriceMax.textContent = window.filters.maxPrice;
+    window.data.initFilterCounters(window.data.goodsInCatalog);
   };
 
   // пытаемся загрузить каталог, если удачно - то рендерим в список, если нет то выводим сообщение об ошибке

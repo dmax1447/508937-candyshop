@@ -200,8 +200,9 @@
     };
     var onPinMouseUp = function () {
       // перерисовываем каталог по условию фильтра
-      var goodsInCatalogFiltred = window.data.goodsInCatalog.filter(filterByFormSelections);
-      refreshCatalog(goodsInCatalogFiltred);
+      window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections);
+      window.data.initFilterCounters(window.data.goodsFiltered);
+      refreshCatalog(window.data.goodsFiltered);
       // описываем обработчик отпускания мыши
       document.removeEventListener('mousemove', onPinMouseMove); // удаляем обработчик "движение мыши"
       document.removeEventListener('mouseup', onPinMouseUp); // удаляем обработчик "отпускание кнопки мыши"
@@ -214,9 +215,10 @@
   var onFormChange = function () {
     // соберем данные для фильтра
     updateFilterState();
-    var goodsInCatalogFiltred = window.data.goodsInCatalog.filter(filterByFormSelections);
-    goodsInCatalogFiltred.sort(sortByFormSelection);
-    refreshCatalog(goodsInCatalogFiltred);
+    window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections);
+    window.data.goodsFiltered.sort(sortByFormSelection);
+    window.data.initFilterCounters(window.data.goodsFiltered);
+    refreshCatalog(window.data.goodsFiltered);
   };
 
   // фуннкция обновления каталога
