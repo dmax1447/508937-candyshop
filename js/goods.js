@@ -24,11 +24,10 @@
   var filterForm = document.querySelector('form'); // форма фильтра
   var rangeFilter = catalogFilterRange.querySelector('.range__filter');
   var range = rangeFilter.clientWidth; // ширина бара фильтра = диапазон
-  var pinSize = 10;
   var filterFavoriteInput = document.querySelector('#filter-favorite');
   var filterAvailabilityInput = document.querySelector('#filter-availability');
   var rangeFillLine = catalogFilterRange.querySelector('.range__fill-line'); // полоска между пинами
-
+  var pinSize = 10;
   // поиск минимальной цены в каталоге
   var findMinPrice = function (catalogData) {
     var min = catalogData[0].price;
@@ -191,7 +190,7 @@
     return Math.round((window.data.maxPrice - window.data.minPrice) * (relativePositionInPercent / 100) + window.data.minPrice); // вычисляю цену
   };
 
-  // обработчик перемещения пина
+  // обработчик перемещения пинов
   var onPinMouseDown = function (downEvt) { // при нажатии запоминаем пин и его позицию
     var pin = downEvt.target;
     var pinStart = pin.offsetLeft;
@@ -219,6 +218,7 @@
     document.addEventListener('mouseup', onPinMouseUp); // запускаем обработчик "отпускание кнопки мыши"
   };
 
+  // обработчик изменений фильтров в форме
   var onFormChange = function (evt) {
     // соберем данные для фильтра
     if (evt.target === filterFavoriteInput && filterAvailabilityInput.checked) {
