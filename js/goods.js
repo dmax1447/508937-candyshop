@@ -93,7 +93,7 @@
       } else {
         goodsInCatalogItem.isFavorite = true;
       }
-      window.data.updateFavoriteCounter(window.data.goodsInCatalog);
+      // window.data.updateFavoriteCounter(window.data.goodsInCatalog);
     }
   };
   // отприсовка карточки в каталоге

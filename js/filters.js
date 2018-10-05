@@ -12,28 +12,20 @@
   var pinSize = 10;
   var catalogCards = document.querySelector('.catalog__cards'); // блок каталог товаров
   var filterForm = document.querySelector('form'); // форма фильтра
+  var filterFavoriteInput = document.querySelector('#filter-favorite');
+  var filterAvailabilityInput = document.querySelector('#filter-availability');
+
+  var activeFilters = {
+    foodType: null,
+    foodProperty: null,
+    sortOrder: null,
+    isFavorite: false,
+    amount: false,
+    minPrice: 0,
+    maxPrice: 90
+  };
   var DEBOUNCE_INTERVAL = 500;
   var lastTimeout;
-
-  // объект для сохрания состояния фильтра
-  var filterState = {
-    'icecream': false,
-    'soda': false,
-    'gum': false,
-    'marmalade': false,
-    'marshmallows': false,
-    'groupKindActive': false,
-    'sugar-free': false,
-    'vegetarian': false,
-    'gluten-free': false,
-    'groupNutritionActive': false,
-    'availability': false,
-    'favorite': false,
-    'groupFavoriteAmountActive': false,
-    'sortOrder': false,
-    'minPrice': 0,
-    'maxPrice': 90
-  };
 
   // мапа соответствия тип товара в базе и типа выбранного фильтра
   var kindOfGoodToFilterValue = {
@@ -42,6 +34,11 @@
     'Жевательная резинка': 'gum',
     'Мармелад': 'marmalade',
     'Зефир': 'marshmallows'
+  };
+  var foodPropertyToNutritionFacts = {
+    'sugar-free': 'sugar',
+    'vegetarian': 'vegetarian',
+    'gluten-free': 'gluten'
   };
 
   // функция debounce
@@ -65,140 +62,125 @@
     catalogCards.appendChild(emptyFiltersMessage);
   };
 
-  // функция сохраняет состояние фильтра в объект для работы сортировки и фильрации
-  var updateFilterState = function () {
-    filterState['groupKindActive'] = false; // сбросим состояние активности у групп фильтра
-    filterState['groupNutritionActive'] = false;
-    filterState['groupFavoriteAmountActive'] = false;
-    for (var i = 0; i <= 4; i++) { // проверяем группу инпутов "вид товара"
-      var fieldName = filterForm[i].value; // читаем название инпута и пишем в поле имя свойства объекта
-      var fieldState = filterForm[i].checked; // читаем состояние инпута и пишем в значение свойства объекта
-      filterState[fieldName] = fieldState;
-      if (fieldState) { // если встречаем активный инпут
-        filterState['groupKindActive'] = true; // поднимаем флаг активности группы
-      }
-    }
-    for (i = 5; i <= 7; i++) { // проверяем группу инпутов "состав товара"
-      fieldName = filterForm[i].value;
-      fieldState = filterForm[i].checked;
-      filterState[fieldName] = fieldState;
-      if (fieldState) {
-        filterState['groupNutritionActive'] = true;
-      }
-    }
-    for (i = 10; i <= 11; i++) { // проверяем группу инпутов "избранное / в наличии"
-      fieldName = filterForm[i].value;
-      fieldState = filterForm[i].checked;
-      filterState[fieldName] = fieldState;
-      if (fieldState) {
-        filterState['groupFavoriteAmountActive'] = true;
-      }
-    }
-    for (i = 12; i <= 15; i++) {
-      if (filterForm[i].checked) {
-        filterState.sortOrder = filterForm[i].value;
-        break;
-      }
-    }
+  var getFiltersAndSortOrder = function () {
+    // очищаем старые данные о фильтрах перед обновлением:
+    activeFilters.foodType = [];
+    activeFilters.foodProperty = [];
+    var activeInputsByFoodType = filterForm.querySelectorAll('[name="food-type"]:checked');
+    var activeInputsByFoodProperty = filterForm.querySelectorAll('[name="food-property"]:checked');
+    activeInputsByFoodType.forEach(function (item) {
+      activeFilters.foodType.push(item.value);
+    });
+    activeInputsByFoodProperty.forEach(function (item) {
+      activeFilters.foodProperty.push(foodPropertyToNutritionFacts[item.value]);
+    });
+    activeFilters.sortOrder = filterForm.querySelector('[name="sort"]:checked').value;
+    activeFilters.isFavorite = document.querySelector('#filter-favorite').checked;
+    activeFilters.amount = document.querySelector('#filter-availability').checked;
   };
 
-  // фильтр данных каталога по значениям фильров в filterState
-  var filterByFormSelections = function (item) {
-    // свойства товара для фильтрации
-    var isFilterPassed = false; // флаг соответствия фильтру
-    var goodKind = kindOfGoodToFilterValue[item.kind]; // конвертим тип товара в фильтре под каталог
-    var isKindMatched = false; // флаг соответствия типа товара
-    var isNutritionMatched = false; // флаг соответствия состава товара
+  var filterGoods = function (item) {
+    var isFoodTypeMatch = false;
+    var isFoodPropertyMatch = false;
     var isPriceMatched = false;
-    // проверяем соответствие типа товара
-    if (filterState.groupKindActive) { // если фильтр по товару активен
-      isKindMatched = filterState[goodKind]; // проверим соответствие товара фильтру
-    } else { // если фильтр по товару не активен то считаем его пройденным
-      isKindMatched = true;
-    }
-    // проверяем соответствие состава товара
-    if (filterState.groupNutritionActive) { // если фильтр по составу активен
-      if (filterState['gluten-free'] && item.nutritionFacts.gluten) { // проверяем совпадение значений фильтра и товара
-        isNutritionMatched = true;
-      }
-      if (filterState['sugar-free'] && item.nutritionFacts.sugar) {
-        isNutritionMatched = true;
-      }
-      if (filterState['vegetarian'] && item.nutritionFacts.vegetarian) {
-        isNutritionMatched = true;
-      }
-    } else { // если фильтр по составу не активен то считаем его пройденным
-      isNutritionMatched = true;
-    }
-    isFilterPassed = isKindMatched && isNutritionMatched;
-    // если включен фильтр избранное и товар в избранном - считаем фильтр пройденным
-    if (filterState.favorite) {
+
+    if (activeFilters.isFavorite) {
       return item.isFavorite;
     }
-    if (filterState.availability) {
-      return (item.amount > 0);
+    if (activeFilters.amount) {
+      return item.amount > 0;
     }
 
-    // если включен фильтр наличие и количество товара > 0 то считаем фильтр пройденным
-    if (filterState.availability && item.amount > 0) {
-      return true;
+    if (activeFilters.foodType.length > 0) {
+      isFoodTypeMatch = checkFoodTypeInFilters(item);
+    } else {
+      isFoodTypeMatch = true;
     }
-    // проверяем соответствует ли товар границам по цене
-    if (item.price >= filterState.minPrice && item.price <= filterState.maxPrice) {
+    if (activeFilters.foodProperty.length > 0) {
+      isFoodPropertyMatch = checkFoodPropertyInFilters(item);
+    } else {
+      isFoodPropertyMatch = true;
+    }
+    if (item.price >= activeFilters.minPrice && item.price <= activeFilters.maxPrice) {
       isPriceMatched = true;
     }
-    return isFilterPassed && isPriceMatched;
+    return isFoodTypeMatch && isFoodPropertyMatch && isPriceMatched;
   };
-
-  // сортировка данных каталога. тип сортировки берем из filterState
-  var sortByFormSelection = function (item1, item2) {
-    // если выбрана сортировка "сначала дорогие"
-    if (filterState.sortOrder === 'expensive') {
-      if (item2.price > item1.price) {
-        return 1;
-      }
-      if (item2.price < item1.price) {
-        return -1;
-      }
-    }
-    // если выбрана сортировка "сначала дешевые"
-    if (filterState.sortOrder === 'cheep') {
-      if (item2.price < item1.price) {
-        return 1;
-      }
-      if (item2.price > item1.price) {
-        return -1;
+  // всопмогателльная функция для фильтрации, проверяет товар на соответствие по типу
+  var checkFoodTypeInFilters = function (item) {
+    var goodKind = kindOfGoodToFilterValue[item.kind];
+    return (activeFilters.foodType.indexOf(goodKind) > -1);
+  };
+  // всопмогателльная функция для фильтрации, проверяет товар на соответствие по составу
+  var checkFoodPropertyInFilters = function (item) {
+    for (var i = 0; i < activeFilters.foodProperty.length; i++) { // ищем циклом по фильтруемым полям
+      if (item.nutritionFacts[activeFilters.foodProperty[i]]) { // поля в поле продукта у которых фильруемый тип true
+        return true;
       }
     }
-    // если выбрана сортировка "по рейтингу"
-    if (filterState.sortOrder === 'rating') {
-      if (item2.rating.value > item1.rating.value) {
-        return 1;
-      }
-      if (item2.rating.value < item1.rating.value) {
-        return -1;
-      }
-      if (item2.rating.value === item1.rating.value) {
-        if (item2.rating.number > item1.rating.number) {
-          return 1;
-        }
-        if (item2.rating.number < item1.rating.number) {
-          return -1;
-        } else {
-          return 0;
-        }
-      }
+    return false;
+  };
+  // сравнение товаров по цене
+  var comapareByPrice = function (item1, item2) {
+    if (item2.price > item1.price) {
+      return 1;
     }
-    // если выбрана сортировка "сначала популярные"
-    if (filterState.sortOrder === 'popular') {
-      if (item2.id < item1.id) {
+    if (item2.price < item1.price) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+  // сравнение товаров по рейтингу
+  var comapareByRating = function (item1, item2) {
+    if (item2.rating.value > item1.rating.value) {
+      return 1;
+    }
+    if (item2.rating.value < item1.rating.value) {
+      return -1;
+    }
+    if (item2.rating.value === item1.rating.value) {
+      if (item2.rating.number > item1.rating.number) {
         return 1;
       }
-      if (item2.id > item1.id) {
+      if (item2.rating.number < item1.rating.number) {
         return -1;
       }
     }
     return 0;
+  };
+  // сравнение товаров по популярности
+  var comapareByPopuarity = function (item1, item2) {
+    if (item2.id < item1.id) {
+      return 1;
+    }
+    if (item2.id > item1.id) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+
+
+  // сортировка данных каталога. тип сортировки берем из filterState
+  var sortByFormSelection = function (item1, item2) {
+    // если выбрана сортировка "сначала дорогие"
+    var result;
+    switch (activeFilters.sortOrder) {
+      case 'expensive':
+        result = comapareByPrice(item1, item2);
+        break;
+      case 'cheep':
+        result = comapareByPrice(item2, item1);
+        break;
+      case 'rating':
+        result = comapareByRating(item1, item2);
+        break;
+      case 'popular':
+        result = comapareByPopuarity(item1, item2);
+        break;
+    }
+    return result;
   };
 
   // обработчик перемещения пина
@@ -209,14 +191,14 @@
       var pinCurrent = pinStart - (downEvt.clientX - moveEvt.clientX); // рассчитываем положение пина по сдвигу мыши и начальному положению
       if (pin === leftPin && pinCurrent >= 0 && pinCurrent < rightPin.offsetLeft) { // если пин левый
         pin.style.left = pinCurrent + 'px'; // двигаю пин
-        filterState.minPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
-        rangePriceMin.textContent = filterState.minPrice; // обновляю текстовое поле под пином
+        activeFilters.minPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
+        rangePriceMin.textContent = activeFilters.minPrice; // обновляю текстовое поле под пином
         rangeFillLine.style.left = (pinCurrent + 10) + 'px'; // обновляю филллайн
       }
       if (pin === rightPin && pinCurrent > leftPin.offsetLeft && pinCurrent <= (range - pinSize)) { // если пин правый
         pin.style.left = pinCurrent + 'px'; // двигаю пин
-        filterState.maxPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
-        rangePriceMax.textContent = filterState.maxPrice; // обновляю текстовое поле под пином
+        activeFilters.maxPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
+        rangePriceMax.textContent = activeFilters.maxPrice; // обновляю текстовое поле под пином
         rangeFillLine.style.right = (range - pinCurrent) + 'px'; // обновляю филллайн
       }
     };
@@ -232,8 +214,6 @@
   // обработчик изменений фильтра
   var onFormChange = function (evt) {
     // соберем данные для фильтра
-    var filterFavoriteInput = document.querySelector('#filter-favorite');
-    var filterAvailabilityInput = document.querySelector('#filter-availability');
     if (evt.target === filterFavoriteInput && filterAvailabilityInput.checked) {
       filterAvailabilityInput.checked = false;
     }
@@ -244,6 +224,9 @@
       for (var i = 0; i <= 8; i++) {
         filterForm[i].checked = false;
       }
+      activeFilters.minPrice = 0;
+      activeFilters.maxPrice = 90;
+      window.data.initSlider();
     }
     debounce(refreshOnFilterChange);
   };
@@ -258,13 +241,12 @@
 
   // функция обновляет каталог, счетчики, данных о фильтрах
   var refreshOnFilterChange = function () {
-    updateFilterState(); // обновляем данные о состоянии фильтров
-    window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterByFormSelections); // прогняем данные через фильтр (согласно состоянию фильтров)
-    window.data.goodsFiltered.sort(sortByFormSelection); // сортируем данные (согласно состоянию фильтров)
+    getFiltersAndSortOrder(); // обновляем данные о состоянии фильтров
+    window.data.goodsFiltered = window.data.goodsInCatalog.filter(filterGoods).sort(sortByFormSelection); // прогняем данные через фильтр (согласно состоянию фильтров)
     refreshCatalog(window.data.goodsFiltered); // отрисовываем карточки заново
-    document.querySelector('span.range__count').textContent = '(' + window.data.goodsFiltered.length + ')'; // обновляем счетчик товаров в диапазоне
-    window.data.updateInStockCounter(window.data.goodsFiltered); // обновляем счетчик товара в наличии
-    window.data.updateFavoriteCounter(window.data.goodsFiltered); // обновляем счетчик товаров в избранном
+    // document.querySelector('span.range__count').textContent = '(' + window.data.goodsFiltered.length + ')'; // обновляем счетчик товаров в диапазоне
+    // window.data.updateInStockCounter(window.data.goodsFiltered); // обновляем счетчик товара в наличии
+    // window.data.updateFavoriteCounter(window.data.goodsFiltered); // обновляем счетчик товаров в избранном
     if (window.data.goodsFiltered.length === 0) { // если фильтры слишком строгие
       showEmptyFilterMessage(); // показываем сообщение
     }
@@ -282,5 +264,6 @@
   rightPin.addEventListener('mousedown', onPinMouseDown); // нажатие кнопки мыши на правый пин
   filterForm.addEventListener('change', onFormChange); // на изменения в форме фильтра
   filterForm.addEventListener('submit', onFormSubmit); // на кнопку показать все в фильтре
+
 
 })();
