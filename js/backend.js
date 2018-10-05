@@ -13,6 +13,8 @@
     NOT_FROUND_ERROR: 404,
     SERVER_ERROR: 500
   };
+  var DEBOUNCE_INTERVAL = 500;
+  var lastTimeout;
 
   // функция выполнения запроса, принимает параметры:
   // onSuccses: коллбек на успешное завершение запроса, onError: коллбек на НЕуспешное завершение запроса
@@ -67,7 +69,14 @@
       };
       modalSuccess.classList.remove('modal--hidden');
       btnClose.addEventListener('click', onBtnCloseClick);
+    },
+    debounce: function (fun) { // функция debounce
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
     }
+
   };
 
 })();
