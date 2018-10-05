@@ -6,8 +6,6 @@
   var GET_URL = 'https://js.dump.academy/candyshop/data';
   var POST_URL = 'https://js.dump.academy/candyshop';
   var TIMEOUT = 10000;
-  // блок сообщение об ошибке
-  // блок сообщение об успешном действии
   var Code = {
     SUCCESS: 200,
     NOT_FROUND_ERROR: 404,
@@ -15,6 +13,9 @@
   };
   var DEBOUNCE_INTERVAL = 500;
   var lastTimeout;
+  var inputsFoodType = document.querySelectorAll('[name="food-type"]');
+  var inputsFoodProperty = document.querySelectorAll('[name="food-property"]');
+
 
   // функция выполнения запроса, принимает параметры:
   // onSuccses: коллбек на успешное завершение запроса, onError: коллбек на НЕуспешное завершение запроса
@@ -75,6 +76,22 @@
         window.clearTimeout(lastTimeout);
       }
       lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
+    },
+    disableFilterInputs: function () {
+      inputsFoodType.forEach(function (item) {
+        item.setAttribute('disabled', '');
+      });
+      inputsFoodProperty.forEach(function (item) {
+        item.setAttribute('disabled', '');
+      });
+    },
+    enableFilterInputs: function () {
+      inputsFoodType.forEach(function (item) {
+        item.removeAttribute('disabled');
+      });
+      inputsFoodProperty.forEach(function (item) {
+        item.removeAttribute('disabled');
+      });
     }
 
   };

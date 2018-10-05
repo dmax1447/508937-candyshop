@@ -118,8 +118,6 @@
       return 0;
     }
   };
-
-
   // сортировка данных каталога. тип сортировки берем из filterState
   var sortByFormSelection = function (item1, item2) {
     // если выбрана сортировка "сначала дорогие"

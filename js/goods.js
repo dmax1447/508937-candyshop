@@ -231,9 +231,16 @@
       for (var i = 0; i <= 8; i++) {
         filterForm[i].checked = false;
       }
+      window.backend.disableFilterInputs();
       window.filters.activeFilters.minPrice = 0;
       window.filters.activeFilters.maxPrice = 90;
       window.data.initSlider();
+    }
+    if (filterAvailabilityInput.checked || filterFavoriteInput.checked) {
+      window.backend.disableFilterInputs();
+    }
+    if (!filterAvailabilityInput.checked && !filterFavoriteInput.checked) {
+      window.backend.enableFilterInputs();
     }
     window.backend.debounce(refreshOnFilterChange);
   };

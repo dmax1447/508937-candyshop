@@ -20,7 +20,6 @@
     },
     initFilterCounters: function (catalogData) {
       var filterCounters = document.querySelectorAll('span.input-btn__item-count');
-
       // считаем количество товаров в фильтрах по типу и сотаву товара
       var kindOfGoods = ['Мороженое', 'Газировка', 'Жевательная резинка', 'Мармелад', 'Зефир', 'sugar', 'vegetarian', 'gluten'];
       for (var i = 0; i < kindOfGoods.length; i++) {
