@@ -85,6 +85,8 @@
         goodsInCatalogItem.amount--; // уменьшим количество товара в объекте в каталоге
         var cardInOrder = goodsCards.querySelector('[id="' + id + '"]');
         cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount; // обновим количество товара в карточке корзина
+        goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
+        document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
       }
       busketInHeader.textContent = 'В корзине: ' + window.data.goodsInOrder.length;
 
@@ -174,8 +176,6 @@
     catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
     catalogLoad.classList.add('visually-hidden'); // блок catalog__load скроем, добавив класс visually-hidden
     catalogCards.appendChild(catalogFragment);
-    goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
-    document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
     window.data.minPrice = findMinPrice(window.data.goodsInCatalog); // сохраним нижнюю границу цены
     window.data.maxPrice = findMaxPrice(window.data.goodsInCatalog);
     rangePriceMin.textContent = window.data.minPrice;
@@ -231,16 +231,16 @@
       for (var i = 0; i <= 8; i++) {
         filterForm[i].checked = false;
       }
-      window.backend.disableFilterInputs();
+      window.backend.disableControls();
       window.filters.activeFilters.minPrice = 0;
       window.filters.activeFilters.maxPrice = 90;
       window.data.initSlider();
     }
     if (filterAvailabilityInput.checked || filterFavoriteInput.checked) {
-      window.backend.disableFilterInputs();
+      window.backend.disableControls();
     }
     if (!filterAvailabilityInput.checked && !filterFavoriteInput.checked) {
-      window.backend.enableFilterInputs();
+      window.backend.enableControls();
     }
     window.backend.debounce(refreshOnFilterChange);
   };
@@ -249,6 +249,7 @@
   var onFormSubmit = function (evt) {
     evt.preventDefault();
     filterForm.reset();
+    window.backend.enableControls();
     window.backend.debounce(refreshOnFilterChange);
     window.data.initSlider();
   };

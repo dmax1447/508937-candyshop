@@ -13,8 +13,10 @@
   };
   var DEBOUNCE_INTERVAL = 500;
   var lastTimeout;
-  var inputsFoodType = document.querySelectorAll('[name="food-type"]');
-  var inputsFoodProperty = document.querySelectorAll('[name="food-property"]');
+  var filterForm = document.querySelector('form'); // форма фильтра
+  var inputsFoodType = filterForm.querySelectorAll('[name="food-type"]');
+  var inputsFoodProperty = filterForm.querySelectorAll('[name="food-property"]');
+  var inputsSortOrder = filterForm.querySelectorAll('[name="sort"]');
 
 
   // функция выполнения запроса, принимает параметры:
@@ -77,19 +79,26 @@
       }
       lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
     },
-    disableFilterInputs: function () {
+    disableControls: function () {
       inputsFoodType.forEach(function (item) {
         item.setAttribute('disabled', '');
       });
       inputsFoodProperty.forEach(function (item) {
         item.setAttribute('disabled', '');
       });
+      inputsSortOrder.forEach(function (item) {
+        item.setAttribute('disabled', '');
+      });
+
     },
-    enableFilterInputs: function () {
+    enableControls: function () {
       inputsFoodType.forEach(function (item) {
         item.removeAttribute('disabled');
       });
       inputsFoodProperty.forEach(function (item) {
+        item.removeAttribute('disabled');
+      });
+      inputsSortOrder.forEach(function (item) {
         item.removeAttribute('disabled');
       });
     }
