@@ -39,7 +39,14 @@
       goodsCards.removeChild(currentCard); // удаляем карточку товара из корзины
       orderData.splice(index, 1); // удаляем объект товар из массива корзина
     }
-    busketInHeader.textContent = 'В корзине: ' + orderData.length; // обновляем инфу в шапке
+    if (orderData.length === 0) {
+      goodsCards.classList.add('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
+      document.querySelector('.goods__card-empty').classList.remove('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
+      busketInHeader.textContent = 'В корзине пусто! ';
+    } else {
+      busketInHeader.textContent = 'В корзине: ' + orderData.length; // обновляем инфу в шапке
+    }
+
   };
   // функция показа окна при успехе
 
@@ -68,7 +75,7 @@
       card.querySelector('.card-order__title').textContent = cardData.name;
       card.querySelector('.card-order__img').src = 'img/cards/' + cardData.picture;
       card.querySelector('.card-order__img').alt = cardData.name;
-      card.querySelector('.card-order__price').textContent = cardData.price;
+      card.querySelector('.card-order__price').textContent = cardData.price + ' ₽';
       card.querySelector('.card-order__count').value = cardData.orderCount;
       // добавим обработчик кликов по карточке
       card.addEventListener('click', onOrderCardClick);

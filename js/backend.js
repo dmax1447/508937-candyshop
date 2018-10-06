@@ -6,13 +6,18 @@
   var GET_URL = 'https://js.dump.academy/candyshop/data';
   var POST_URL = 'https://js.dump.academy/candyshop';
   var TIMEOUT = 10000;
-  // блок сообщение об ошибке
-  // блок сообщение об успешном действии
   var Code = {
     SUCCESS: 200,
     NOT_FROUND_ERROR: 404,
     SERVER_ERROR: 500
   };
+  var DEBOUNCE_INTERVAL = 500;
+  var lastTimeout;
+  var filterForm = document.querySelector('form'); // форма фильтра
+  var inputsFoodType = filterForm.querySelectorAll('[name="food-type"]');
+  var inputsFoodProperty = filterForm.querySelectorAll('[name="food-property"]');
+  var inputsSortOrder = filterForm.querySelectorAll('[name="sort"]');
+
 
   // функция выполнения запроса, принимает параметры:
   // onSuccses: коллбек на успешное завершение запроса, onError: коллбек на НЕуспешное завершение запроса
@@ -67,7 +72,37 @@
       };
       modalSuccess.classList.remove('modal--hidden');
       btnClose.addEventListener('click', onBtnCloseClick);
+    },
+    debounce: function (fun) { // функция debounce
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
+    },
+    disableControls: function () {
+      inputsFoodType.forEach(function (item) {
+        item.setAttribute('disabled', '');
+      });
+      inputsFoodProperty.forEach(function (item) {
+        item.setAttribute('disabled', '');
+      });
+      inputsSortOrder.forEach(function (item) {
+        item.setAttribute('disabled', '');
+      });
+
+    },
+    enableControls: function () {
+      inputsFoodType.forEach(function (item) {
+        item.removeAttribute('disabled');
+      });
+      inputsFoodProperty.forEach(function (item) {
+        item.removeAttribute('disabled');
+      });
+      inputsSortOrder.forEach(function (item) {
+        item.removeAttribute('disabled');
+      });
     }
+
   };
 
 })();
