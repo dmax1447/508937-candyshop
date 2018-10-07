@@ -38,21 +38,40 @@
       goodsInCatalogItem.amount += goodsInOrderItem.orderedAmount; // возвращаем товар на склад
       goodsCards.removeChild(currentCard); // удаляем карточку товара из корзины
       orderData.splice(index, 1); // удаляем объект товар из массива корзина
+
     }
     if (orderData.length === 0) {
       goodsCards.classList.add('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
       document.querySelector('.goods__card-empty').classList.remove('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
       busketInHeader.textContent = 'В корзине пусто! ';
+      document.querySelector('.goods__total').classList.add('visually-hidden');
     } else {
       busketInHeader.textContent = 'В корзине: ' + orderData.length; // обновляем инфу в шапке
+      showCostOfGoods();
     }
 
   };
-  // функция показа окна при успехе
+  // подсчет стоимости товара в корзине
+  var calculateCost = function (orderData) {
+    var totalCost = 0;
+    orderData.forEach(function (orderItem) {
+      totalCost += (orderItem.price * orderItem.orderedAmount);
+    });
+    return totalCost;
+  };
+
+  var showCostOfGoods = function () {
+    var totalPrice = calculateCost(window.data.goodsInOrder);
+    var totalCount = window.data.goodsInOrder.length;
+    document.querySelector('.goods__total').classList.remove('visually-hidden');
+    var totalCountElement = document.querySelector('.goods__total-count');
+    totalCountElement.childNodes[0].textContent = 'Итого за ' + totalCount + ' товаров';
+    totalCountElement.childNodes[1].textContent = totalPrice + ' ₽';
+  };
 
   // обработчик события "отправить" на форме заказа
   var onFormOrderSubmit = function (evt) {
-    if (formOrder.checkValidity()) { // проверим, заполнена ли форма правильно, и номер карты верный
+    if (formOrder.checkValidity() && (window.data.goodsInOrder.length > 0)) { // проверим, заполнена ли форма правильно, и товар в корзине есть
       evt.preventDefault();
       window.backend.sendFormData(window.backend.showSuccess, window.backend.showError, new FormData(formOrder)); // отправляем данные
       formOrder.reset(); // сбрасываем поля формы
@@ -81,5 +100,6 @@
       card.addEventListener('click', onOrderCardClick);
       return card;
     },
+    showCostOfGoods: showCostOfGoods
   };
 })();

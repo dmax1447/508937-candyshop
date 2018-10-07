@@ -41,7 +41,8 @@
       return item.isFavorite;
     }
     if (activeFilters.amount) {
-      return item.amount > 0;
+      var itemInCatalog = window.data.findItemById(item.id, window.data.goodsInCatalog);
+      return itemInCatalog.amount > 0;
     }
 
     if (activeFilters.foodType.length > 0) {
@@ -66,7 +67,7 @@
   };
   // вспомогателльная функция для фильтрации, проверяет товар на соответствие по составу
   var checkFoodPropertyInFilters = function (item) {
-// если в товаре есть сахар и в фильтре есть критерий "без" сахара
+    // если в товаре есть сахар и в фильтре есть критерий "без" сахара
     if (item.nutritionFacts.sugar && (activeFilters.foodProperty.indexOf('sugar-free') !== -1)) {
       return false; // товар НЕ проходит
     }

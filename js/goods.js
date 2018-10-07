@@ -89,8 +89,7 @@
         document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
       }
       busketInHeader.textContent = 'В корзине: ' + window.data.goodsInOrder.length;
-
-
+      window.busket.showCostOfGoods();
     }
     if (evt.target === btnFavorite) { // обработаем клик по кнопке в избранное
       evt.preventDefault();
