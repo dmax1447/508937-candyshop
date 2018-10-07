@@ -21,18 +21,30 @@
     initFilterCounters: function (catalogData) {
       var filterCounters = document.querySelectorAll('span.input-btn__item-count');
       // считаем количество товаров в фильтрах по типу и сотаву товара
-      var kindOfGoods = ['Мороженое', 'Газировка', 'Жевательная резинка', 'Мармелад', 'Зефир', 'sugar', 'vegetarian', 'gluten'];
+      var kindOfGoods = ['Мороженое', 'Газировка', 'Жевательная резинка', 'Мармелад', 'Зефир'];
       for (var i = 0; i < kindOfGoods.length; i++) {
         var filtred = catalogData.filter(
             function (item) {
-              if (i <= 4) {
-                return (item.kind === kindOfGoods[i]);
-              }
-              return item.nutritionFacts[kindOfGoods[i]];
+              return (item.kind === kindOfGoods[i]);
             }
         );
         filterCounters[i].textContent = '(' + filtred.length + ')';
       }
+      var noSugarCount = catalogData.filter(
+          function (item) {
+            return item.nutritionFacts.sugar === false;
+          }).length;
+      filterCounters[5].textContent = '(' + noSugarCount + ')';
+      var vegetarianCount = catalogData.filter(
+          function (item) {
+            return item.nutritionFacts.vegetarian;
+          }).length;
+      filterCounters[6].textContent = '(' + vegetarianCount + ')';
+      var noGlutenCount = catalogData.filter(
+          function (item) {
+            return item.nutritionFacts.gluten === false;
+          }).length;
+      filterCounters[7].textContent = '(' + noGlutenCount + ')';
       // считаем избранное:
       var favorite = catalogData.filter(
           function (item) {

@@ -12,11 +12,6 @@
     'Мармелад': 'marmalade',
     'Зефир': 'marshmallows'
   };
-  var foodPropertyToNutritionFacts = {
-    'sugar-free': 'sugar',
-    'vegetarian': 'vegetarian',
-    'gluten-free': 'gluten'
-  };
 
   // функция обновления состояния фильтра
   var getFiltersAndSortOrder = function () {
@@ -29,7 +24,7 @@
       activeFilters.foodType.push(item.value);
     });
     activeInputsByFoodProperty.forEach(function (item) {
-      activeFilters.foodProperty.push(foodPropertyToNutritionFacts[item.value]);
+      activeFilters.foodProperty.push(item.value);
     });
     activeFilters.sortOrder = filterForm.querySelector('[name="sort"]:checked').value;
     activeFilters.isFavorite = document.querySelector('#filter-favorite').checked;
@@ -69,14 +64,21 @@
     var goodKind = kindOfGoodToFilterValue[item.kind];
     return (activeFilters.foodType.indexOf(goodKind) > -1);
   };
-  // всопмогателльная функция для фильтрации, проверяет товар на соответствие по составу
+  // вспомогателльная функция для фильтрации, проверяет товар на соответствие по составу
   var checkFoodPropertyInFilters = function (item) {
-    for (var i = 0; i < activeFilters.foodProperty.length; i++) { // ищем циклом по фильтруемым полям
-      if (item.nutritionFacts[activeFilters.foodProperty[i]]) { // поля в поле продукта у которых фильруемый тип true
-        return true;
-      }
+// если в товаре есть сахар и в фильтре есть критерий "без" сахара
+    if (item.nutritionFacts.sugar && (activeFilters.foodProperty.indexOf('sugar-free') !== -1)) {
+      return false; // товар НЕ проходит
     }
-    return false;
+    // если у товаре есть глютен и в фильтре есть критерий "без" сахара
+    if (item.nutritionFacts.gluten && (activeFilters.foodProperty.indexOf('gluten-free') !== -1)) {
+      return false; // товар НЕ проходит
+    }
+    // если товар НЕ вегетарианский а в фильтре есть есть критерий вегетарианский
+    if (!item.nutritionFacts.vegetarian && (activeFilters.foodProperty.indexOf('vegetarian') !== -1)) {
+      return false; // товар НЕ проходит
+    }
+    return true; // если все три условия не сроаботали то товар проходит
   };
   // сравнение товаров по цене
   var comapareByPrice = function (item1, item2) {
