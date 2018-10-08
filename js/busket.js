@@ -28,8 +28,6 @@
     var btnIncrease = currentCard.querySelector('.card-order__btn--increase'); // кнопка +
     var btnDecrease = currentCard.querySelector('.card-order__btn--decrease'); // кнопка -
     var btnClose = currentCard.querySelector('.card-order__close'); // кнопка Х
-
-
     if (evt.target === btnIncrease && goodsInCatalogItem.amount >= 1) { // если клик по + и товар есть на складе
       goodsInOrderItem.orderedAmount++; // увеличим количество товара в объекте в корзине
       goodsInCatalogItem.amount--; // уменьшим количество товара в объекте в каталоге
@@ -65,7 +63,7 @@
     window.data.setCardClassAmount(catalogCard, goodsInCatalogItem.amount);
 
   };
-  // подсчет стоимости товара в корзине
+  // функция суммарную стоимость товаров в корзине
   var calculateCost = function (orderData) {
     var totalCost = 0;
     orderData.forEach(function (orderItem) {
@@ -74,6 +72,7 @@
     return totalCost;
   };
 
+  // функция показывает окно с количеством и стоимостью товаров в корзине
   var showCostOfGoods = function () {
     var totalPrice = calculateCost(window.data.goodsInOrder);
     var totalCount = window.data.goodsInOrder.length;
@@ -100,8 +99,6 @@
       input.setAttribute('disabled', '');
     });
     btnSubmit.setAttribute('disabled', '');
-    // fieldsetDilverStores.setAttribute('disabled', '');
-    // fieldsetDilverCourier.setAttribute('disabled', '');
   };
   var enableOrderForm = function () {
     formInputsAll.forEach(function (input) {
@@ -114,13 +111,12 @@
 
     } else {
       fieldsetDilverCourier.setAttribute('disabled', '');
-      // deliverDescription.setAttribute('disabled', '');
+      deliverDescription.setAttribute('disabled', '');
     }
-
-
   };
 
-  formOrder.addEventListener('submit', onFormOrderSubmit); // добавляем обработчик события отправить на форму
+  // добавляем обработчик события отправить на форму
+  formOrder.addEventListener('submit', onFormOrderSubmit);
 
   // экспорт:
   window.busket = {

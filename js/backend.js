@@ -53,7 +53,7 @@
     sendFormData: function (onSuccess, onError, data) {
       makeRequest(onSuccess, onError, POST_URL, 'POST', data);
     },
-    // функция показа окна ошибки
+    // функция показа окна ошибки при загрузке / отправке
     showError: function (message) {
       var modalError = document.querySelector('.modal--error');
       var messageField = modalError.querySelector('p.modal__message');
@@ -70,6 +70,7 @@
         }
       });
     },
+    // функция показывает окно при успешной отправке формы
     showSuccess: function () {
       var modalSuccess = document.querySelector('.modal--success');
       var btnClose = modalSuccess.querySelector('.modal__close');
