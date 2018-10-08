@@ -102,7 +102,6 @@
       } else {
         goodsInCatalogItem.isFavorite = true;
       }
-      // window.data.updateFavoriteCounter(window.data.goodsInCatalog);
     }
   };
 
