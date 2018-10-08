@@ -11,13 +11,14 @@
     NOT_FROUND_ERROR: 404,
     SERVER_ERROR: 500
   };
+  var ESC_KEYCODE = 27;
   var DEBOUNCE_INTERVAL = 500;
   var lastTimeout;
   var filterForm = document.querySelector('form'); // форма фильтра
   var inputsFoodType = filterForm.querySelectorAll('[name="food-type"]');
   var inputsFoodProperty = filterForm.querySelectorAll('[name="food-property"]');
   var inputsSortOrder = filterForm.querySelectorAll('[name="sort"]');
-  var ESC_KEYCODE = 27;
+
 
   // функция выполнения запроса, принимает параметры:
   // onSuccses: коллбек на успешное завершение запроса, onError: коллбек на НЕуспешное завершение запроса
@@ -77,6 +78,11 @@
       };
       modalSuccess.classList.remove('modal--hidden');
       btnClose.addEventListener('click', onBtnCloseClick);
+      document.addEventListener('keydown', function (evt) {
+        if (evt.keyCode === ESC_KEYCODE) {
+          modalSuccess.classList.add('modal--hidden');
+        }
+      });
     },
     debounce: function (fun) { // функция debounce
       if (lastTimeout) {

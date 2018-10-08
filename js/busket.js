@@ -49,7 +49,7 @@
       goodsInCatalogItem.amount += goodsInOrderItem.orderedAmount; // возвращаем товар на склад
       goodsCards.removeChild(currentCard); // удаляем карточку товара из корзины
       orderData.splice(index, 1); // удаляем объект товар из массива корзина
-
+      evt.preventDefault();
     }
     if (orderData.length === 0) {
       goodsCards.classList.add('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
