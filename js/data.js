@@ -86,6 +86,22 @@
           }
       );
       document.querySelectorAll('span.input-btn__item-count')[9].textContent = '(' + inStock.length + ')';
+    },
+    setCardClassAmount: function (card, amount) {
+      card.classList.remove('card--in-stock');
+      card.classList.remove('card--little');
+      card.classList.remove('card--soon');
+      switch (amount) {
+        case 0:
+          card.classList.add('card--soon');
+          break;
+        case 1: case 2: case 3: case 4:
+          card.classList.add('card--little');
+          break;
+        default:
+          card.classList.add('card--in-stock');
+          break;
+      }
     }
   };
 

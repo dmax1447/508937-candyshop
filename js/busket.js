@@ -3,8 +3,16 @@
 (function () {
   // переменные и элементы интерфейса
   var goodsCards = document.querySelector('.goods__cards');
+  var catalogCards = document.querySelector('.catalog__cards');
   var busketInHeader = document.querySelector('.main-header__basket');
   var formOrder = document.querySelectorAll('form')[1];
+  var formInputsAll = formOrder.querySelectorAll('input');
+  var deliverDescription = document.querySelector('.deliver__textarea');
+  var fieldsetDilverStores = document.querySelector('.deliver__stores');
+  var fieldsetDilverCourier = document.querySelector('.deliver__entry-fields-wrap');
+  var tabDeliverStore = document.querySelector('.deliver__store');
+  var btnSubmit = document.querySelector('.buy__submit-btn');
+  // var tabDeliverCourier = document.querySelector('.deliver__courier');
 
   // обработчик кликов по элементам карточки в корзине
   var onOrderCardClick = function (evt) {
@@ -14,10 +22,13 @@
     var id = currentCard.getAttribute('id'); // получаем id товара по которуму кликнули
     var goodsInOrderItem = window.data.findItemById(id, orderData); // находим объект-товар в массиве-каталоге
     var goodsInCatalogItem = window.data.findItemById(id, catalogData); // найдем объект-товар в массиве-корзине
+    var catalogCardSelector = '[id="' + id + '"]';
+    var catalogCard = catalogCards.querySelector(catalogCardSelector);
     var index = orderData.indexOf(goodsInOrderItem); // находим индекс объекта-товара в массиве-корзине
     var btnIncrease = currentCard.querySelector('.card-order__btn--increase'); // кнопка +
     var btnDecrease = currentCard.querySelector('.card-order__btn--decrease'); // кнопка -
     var btnClose = currentCard.querySelector('.card-order__close'); // кнопка Х
+
 
     if (evt.target === btnIncrease && goodsInCatalogItem.amount >= 1) { // если клик по + и товар есть на складе
       goodsInOrderItem.orderedAmount++; // увеличим количество товара в объекте в корзине
@@ -45,10 +56,13 @@
       document.querySelector('.goods__card-empty').classList.remove('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
       busketInHeader.textContent = 'В корзине пусто! ';
       document.querySelector('.goods__total').classList.add('visually-hidden');
+      disableOrderForm();
     } else {
       busketInHeader.textContent = 'В корзине: ' + orderData.length; // обновляем инфу в шапке
+      enableOrderForm();
       showCostOfGoods();
     }
+    window.data.setCardClassAmount(catalogCard, goodsInCatalogItem.amount);
 
   };
   // подсчет стоимости товара в корзине
@@ -80,6 +94,31 @@
       document.querySelector('.payment__cash-wrap').classList.add('visually-hidden'); // выводим вкладку оплата картой
     }
   };
+  // функция блокировки формы заказа (для пустой корзины)
+  var disableOrderForm = function () {
+    formInputsAll.forEach(function (input) {
+      input.setAttribute('disabled', '');
+    });
+    btnSubmit.setAttribute('disabled', '');
+    // fieldsetDilverStores.setAttribute('disabled', '');
+    // fieldsetDilverCourier.setAttribute('disabled', '');
+  };
+  var enableOrderForm = function () {
+    formInputsAll.forEach(function (input) {
+      input.removeAttribute('disabled');
+    });
+    btnSubmit.removeAttribute('disabled');
+    deliverDescription.removeAttribute('disabled');
+    if (tabDeliverStore.classList.contains('visually-hidden')) {
+      fieldsetDilverStores.setAttribute('disabled', '');
+
+    } else {
+      fieldsetDilverCourier.setAttribute('disabled', '');
+      // deliverDescription.setAttribute('disabled', '');
+    }
+
+
+  };
 
   formOrder.addEventListener('submit', onFormOrderSubmit); // добавляем обработчик события отправить на форму
 
@@ -100,6 +139,8 @@
       card.addEventListener('click', onOrderCardClick);
       return card;
     },
-    showCostOfGoods: showCostOfGoods
+    showCostOfGoods: showCostOfGoods,
+    disableOrderForm: disableOrderForm,
+    enableOrderForm: enableOrderForm
   };
 })();

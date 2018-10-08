@@ -17,7 +17,7 @@
   var inputsFoodType = filterForm.querySelectorAll('[name="food-type"]');
   var inputsFoodProperty = filterForm.querySelectorAll('[name="food-property"]');
   var inputsSortOrder = filterForm.querySelectorAll('[name="sort"]');
-
+  var ESC_KEYCODE = 27;
 
   // функция выполнения запроса, принимает параметры:
   // onSuccses: коллбек на успешное завершение запроса, onError: коллбек на НЕуспешное завершение запроса
@@ -63,6 +63,11 @@
       };
       modalError.classList.remove('modal--hidden');
       btnClose.addEventListener('click', onBtnCloseClick);
+      document.addEventListener('keydown', function (evt) {
+        if (evt.keyCode === ESC_KEYCODE) {
+          modalError.classList.add('modal--hidden');
+        }
+      });
     },
     showSuccess: function () {
       var modalSuccess = document.querySelector('.modal--success');
@@ -102,7 +107,6 @@
         item.removeAttribute('disabled');
       });
     }
-
   };
 
 })();

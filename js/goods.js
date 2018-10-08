@@ -60,6 +60,22 @@
     }
     return undefined;
   };
+  // var setCardClassAmount = function (card, amount) {
+  //   card.classList.remove('card--in-stock');
+  //   card.classList.remove('card--little');
+  //   card.classList.remove('card--soon');
+  //   switch (amount) {
+  //     case 0:
+  //       card.classList.add('card--soon');
+  //       break;
+  //     case 1: case 2: case 3: case 4:
+  //       card.classList.add('card--little');
+  //       break;
+  //     default:
+  //       card.classList.add('card--in-stock');
+  //       break;
+  //   }
+  // };
 
   // обработчик кликов - работа кнопок в избранное и в корзину
   var onCatalogCardClick = function (evt) {
@@ -90,6 +106,8 @@
       }
       busketInHeader.textContent = 'В корзине: ' + window.data.goodsInOrder.length;
       window.busket.showCostOfGoods();
+      window.busket.enableOrderForm();
+      window.data.setCardClassAmount(currentCard, goodsInCatalogItem.amount);
     }
     if (evt.target === btnFavorite) { // обработаем клик по кнопке в избранное
       evt.preventDefault();
@@ -110,23 +128,12 @@
     var card = cardTemplate.querySelector('.catalog__card');
     var sugar = cardData.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
     // очищаем карточку
-    card.classList.remove('card--in-stock');
     card.querySelector('.stars__rating').classList.remove('stars__rating--five');
     // добавляем данные
     card.setAttribute('id', cardData.id); // добавим карточке id
     card.querySelector('.card__title').textContent = cardData.name;
     card.querySelector('.card__img').src = 'img/cards/' + cardData.picture;
-    switch (cardData.amount) {
-      case 0:
-        card.classList.add('card--soon');
-        break;
-      case 1: case 2: case 3: case 4:
-        card.classList.add('card--little');
-        break;
-      default:
-        card.classList.add('card--in-stock');
-        break;
-    }
+    window.data.setCardClassAmount(card, cardData.amount);
     card.querySelector('.card__price').childNodes[0].textContent = cardData.price + ' ';
     card.querySelector('.card__price').childNodes[2].textContent = '/ ' + cardData.weight + ' Г';
     card.querySelector('.stars__rating').classList.add(startsToSyle[cardData.rating.value]);
@@ -181,6 +188,7 @@
     rangePriceMax.textContent = window.data.maxPrice;
     window.data.initSlider(); // выставляем начальные значния слайдера
     window.data.initFilterCounters(window.data.goodsInCatalog); // выставляем значения счетчиков
+    window.busket.disableOrderForm(); // отключаем инпуты доставки
   };
 
   // функция расчета цены по положению пина

@@ -8,9 +8,11 @@
   var tabDeliverCourier = deliverySection.querySelector('.deliver__courier');
   var btnDeliverStores = deliverySection.querySelector('#deliver__store');
   var btnDeliverCourier = deliverySection.querySelector('#deliver__courier');
-  var deliveryCourierInputs = tabDeliverCourier.querySelectorAll('input');
-  var deliveryStoreInputs = tabDeliverStore.querySelectorAll('input');
+  // var deliveryCourierInputs = tabDeliverCourier.querySelectorAll('input');
+  // var deliveryStoreInputs = tabDeliverStore.querySelectorAll('input');
   var deliveryStoreList = document.querySelector('.deliver__store-list');
+  var fieldsetDilverStores = document.querySelector('.deliver__stores');
+  var fieldsetDilverCourier = document.querySelector('.deliver__entry-fields-wrap');
 
   var inputStoreNameToAdress = {
     academicheskaya: 'проспект Науки, д. 19, корп. 3, литер А, ТК «Платформа», 3-й этаж, секция 310',
@@ -30,22 +32,26 @@
     if (evt.target === btnDeliverStores) { // если клик по "заеду в магаз"
       tabDeliverStore.classList.remove('visually-hidden'); // показываем блок доставки в магаз
       tabDeliverCourier.classList.add('visually-hidden'); // скрываем блок доставки курьером
-      for (var i = 0; i < deliveryCourierInputs.length; i++) { // отключаем инпуты курьерской доставки
-        deliveryCourierInputs[i].setAttribute('disabled', '');
-      }
-      for (i = 0; i < deliveryStoreInputs.length; i++) { // включаем инпуты выбора магазина
-        deliveryStoreInputs[i].removeAttribute('disabled');
-      }
+      // for (var i = 0; i < deliveryCourierInputs.length; i++) { // отключаем инпуты курьерской доставки
+      //   deliveryCourierInputs[i].setAttribute('disabled', '');
+      // }
+      // for (i = 0; i < deliveryStoreInputs.length; i++) { // включаем инпуты выбора магазина
+      //   deliveryStoreInputs[i].removeAttribute('disabled');
+      // }
+      fieldsetDilverStores.removeAttribute('disabled');
+      fieldsetDilverCourier.setAttribute('disabled', '');
     }
     if (evt.target === btnDeliverCourier) {
       tabDeliverStore.classList.add('visually-hidden');
       tabDeliverCourier.classList.remove('visually-hidden');
-      for (i = 0; i < deliveryCourierInputs.length; i++) { // включаем инпуты курьерской доставки
-        deliveryCourierInputs[i].removeAttribute('disabled');
-      }
-      for (i = 0; i < deliveryStoreInputs.length; i++) { // отключаем инпуты выбора магазина
-        deliveryStoreInputs[i].setAttribute('disabled', '');
-      }
+      // for (i = 0; i < deliveryCourierInputs.length; i++) { // включаем инпуты курьерской доставки
+      //   deliveryCourierInputs[i].removeAttribute('disabled');
+      // }
+      // for (i = 0; i < deliveryStoreInputs.length; i++) { // отключаем инпуты выбора магазина
+      //   deliveryStoreInputs[i].setAttribute('disabled', '');
+      // }
+      fieldsetDilverStores.setAttribute('disabled', '');
+      fieldsetDilverCourier.removeAttribute('disabled');
     }
   };
 
@@ -64,7 +70,7 @@
   };
 
   deliveryToggle.addEventListener('click', onDeliveryBtnsClick); // добавим обработчик на раздел выбора метода доставки
-
   deliveryStoreList.addEventListener('click', onDeliveryStoreListClick); // вешаем обработчик выбор магазина на список магазов
+
 
 })();
