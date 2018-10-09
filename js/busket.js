@@ -2,17 +2,16 @@
 'use strict';
 (function () {
   // переменные и элементы интерфейса
-  var goodsCards = document.querySelector('.goods__cards');
-  var catalogCards = document.querySelector('.catalog__cards');
-  var busketInHeader = document.querySelector('.main-header__basket');
-  var formOrder = document.querySelectorAll('form')[1];
-  var formInputsAll = formOrder.querySelectorAll('input');
-  var deliverDescription = document.querySelector('.deliver__textarea');
-  var fieldsetDilverStores = document.querySelector('.deliver__stores');
-  var fieldsetDilverCourier = document.querySelector('.deliver__entry-fields-wrap');
-  var tabDeliverStore = document.querySelector('.deliver__store');
-  var btnSubmit = document.querySelector('.buy__submit-btn');
-  // var tabDeliverCourier = document.querySelector('.deliver__courier');
+  var goodsCards = document.querySelector('.goods__cards'); // раздел корзина
+  var catalogCards = document.querySelector('.catalog__cards'); // раздел каталог
+  var busketInHeader = document.querySelector('.main-header__basket'); // раздел в заголовке "в корзине""
+  var formOrder = document.querySelectorAll('form')[1]; // форма заказа
+  var formInputsAll = formOrder.querySelectorAll('input'); // все инпуты формы заказа
+  var deliverDescription = document.querySelector('.deliver__textarea'); // текстовое поле описание доставки курьером
+  var fieldsetDilverStores = document.querySelector('.deliver__stores'); // набор инпутов в разделе доставка в магазины
+  var fieldsetDilverCourier = document.querySelector('.deliver__entry-fields-wrap'); // набор инутов в разделе доставка
+  var tabDeliverStore = document.querySelector('.deliver__store'); // таб доставки в магазины
+  var btnSubmit = document.querySelector('.buy__submit-btn'); // кнопка отправить форму
 
   // обработчик кликов по элементам карточки в корзине
   var onOrderCardClick = function (evt) {
@@ -49,18 +48,18 @@
       orderData.splice(index, 1); // удаляем объект товар из массива корзина
       evt.preventDefault();
     }
-    if (orderData.length === 0) {
+    if (orderData.length === 0) { // если после действий в заказе не осталось товаров:
       goodsCards.classList.add('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
       document.querySelector('.goods__card-empty').classList.remove('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
-      busketInHeader.textContent = 'В корзине пусто! ';
-      document.querySelector('.goods__total').classList.add('visually-hidden');
-      disableOrderForm();
-    } else {
-      busketInHeader.textContent = 'В корзине: ' + orderData.length; // обновляем инфу в шапке
-      enableOrderForm();
-      showCostOfGoods();
+      busketInHeader.textContent = 'В корзине пусто! '; // сообщение в блок корзины в заголовке
+      document.querySelector('.goods__total').classList.add('visually-hidden'); // скрыть блок суммарной стоимости/количества товара в корзине
+      disableOrderForm(); // отключить поля формы заказа
+    } else { // если после действий в заказе есть товары
+      busketInHeader.textContent = 'В корзине: ' + orderData.length; // обновляем блок корзина в заголовке
+      enableOrderForm(); // включаем поля формы заказа
+      showCostOfGoods(); // включаем и показываем стоимость и количество товара в корхине
     }
-    window.data.setCardClassAmount(catalogCard, goodsInCatalogItem.amount);
+    window.data.setCardClassAmount(catalogCard, goodsInCatalogItem.amount); // выставляем карточке в каталоге класс доступности после операций в корзине
 
   };
   // функция суммарную стоимость товаров в корзине
@@ -74,10 +73,10 @@
 
   // функция показывает окно с количеством и стоимостью товаров в корзине
   var showCostOfGoods = function () {
-    var totalPrice = calculateCost(window.data.goodsInOrder);
-    var totalCount = window.data.goodsInOrder.length;
-    document.querySelector('.goods__total').classList.remove('visually-hidden');
-    var totalCountElement = document.querySelector('.goods__total-count');
+    var totalPrice = calculateCost(window.data.goodsInOrder); // считаем общую стоимость
+    var totalCount = window.data.goodsInOrder.length; // сохранияем количество
+    document.querySelector('.goods__total').classList.remove('visually-hidden'); // показываем блок
+    var totalCountElement = document.querySelector('.goods__total-count'); // и в нужные поля показываем данные
     totalCountElement.childNodes[0].textContent = 'Итого за ' + totalCount + ' товаров';
     totalCountElement.childNodes[1].textContent = totalPrice + ' ₽';
   };
@@ -85,15 +84,19 @@
   // обработчик события "отправить" на форме заказа
   var onFormOrderSubmit = function (evt) {
     evt.preventDefault();
-    // если форма прошла проверку, в корзине есть товар, номер карты введен верно
-    if (formOrder.checkValidity() && (window.data.goodsInOrder.length > 0) && window.payments.checkCardNumber()) {
-      window.backend.sendFormData(window.backend.showSuccess, window.backend.showError, new FormData(formOrder)); // отправляем данные
-      formOrder.reset(); // сбрасываем поля формы
-      document.querySelector('.payment__card-status').textContent = 'не определен'; // возвращаем текст про номер карты
-      document.querySelector('.payment__card-wrap').classList.remove('visually-hidden'); // скрываем вкладку наличные
-      document.querySelector('.payment__cash-wrap').classList.add('visually-hidden'); // выводим вкладку оплата картой
+    // если форма валидка и товар есть в корзине
+    if (formOrder.checkValidity && (window.data.goodsInOrder.length > 0)) {
+      // если выбрана оплата картой и карта верна, или выбрана оплата наличными
+      if ((window.payments.selectedPaymentMethod === 'card' && window.payments.checkCardNumber()) || window.payments.selectedPaymentMethod === 'cash') {
+        window.backend.sendFormData(window.backend.showSuccess, window.backend.showError, new FormData(formOrder)); // отправляем данные
+        formOrder.reset(); // сбрасываем поля формы
+        document.querySelector('.payment__card-status').textContent = 'не определен'; // возвращаем текст про номер карты
+        document.querySelector('.payment__card-wrap').classList.remove('visually-hidden'); // скрываем вкладку наличные
+        document.querySelector('.payment__cash-wrap').classList.add('visually-hidden'); // выводим вкладку оплата картой
+      }
     }
   };
+
   // функция блокировки формы заказа (для пустой корзины)
   var disableOrderForm = function () {
     formInputsAll.forEach(function (input) {
@@ -101,6 +104,7 @@
     });
     btnSubmit.setAttribute('disabled', '');
   };
+  // функция разблокировки формы заказа
   var enableOrderForm = function () {
     formInputsAll.forEach(function (input) {
       input.removeAttribute('disabled');

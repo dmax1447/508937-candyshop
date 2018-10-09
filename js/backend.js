@@ -61,14 +61,19 @@
       messageField.textContent = message;
       var onBtnCloseClick = function () {
         modalError.classList.add('modal--hidden');
+        btnClose.removeEventListener('click', onBtnCloseClick);
+        document.removeEventListener('keydown', onBtnEscClick);
+      };
+      var onBtnEscClick = function (evt) {
+        if (evt.keyCode === ESC_KEYCODE) {
+          modalError.classList.add('modal--hidden');
+          btnClose.removeEventListener('click', onBtnCloseClick);
+          document.removeEventListener('keydown', onBtnEscClick);
+        }
       };
       modalError.classList.remove('modal--hidden');
       btnClose.addEventListener('click', onBtnCloseClick);
-      document.addEventListener('keydown', function (evt) {
-        if (evt.keyCode === ESC_KEYCODE) {
-          modalError.classList.add('modal--hidden');
-        }
-      });
+      document.addEventListener('keydown', onBtnEscClick);
     },
     // функция показывает модальное окно при успешной отправке формы
     showSuccess: function () {
@@ -76,14 +81,19 @@
       var btnClose = modalSuccess.querySelector('.modal__close');
       var onBtnCloseClick = function () {
         modalSuccess.classList.add('modal--hidden');
+        btnClose.removeEventListener('click', onBtnCloseClick);
+        document.removeEventListener('keydown', onBtnEscClick);
+      };
+      var onBtnEscClick = function (evt) {
+        if (evt.keyCode === ESC_KEYCODE) {
+          modalSuccess.classList.add('modal--hidden');
+          btnClose.removeEventListener('click', onBtnCloseClick);
+          document.removeEventListener('keydown', onBtnEscClick);
+        }
       };
       modalSuccess.classList.remove('modal--hidden');
       btnClose.addEventListener('click', onBtnCloseClick);
-      document.addEventListener('keydown', function (evt) {
-        if (evt.keyCode === ESC_KEYCODE) {
-          modalSuccess.classList.add('modal--hidden');
-        }
-      });
+      document.addEventListener('keydown', onBtnEscClick);
     },
     // функция debounce
     debounce: function (fun) {

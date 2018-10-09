@@ -27,39 +27,31 @@
   var filterFavoriteInput = document.querySelector('#filter-favorite');
   var filterAvailabilityInput = document.querySelector('#filter-availability');
   var rangeFillLine = catalogFilterRange.querySelector('.range__fill-line'); // полоска между пинами
-  var pinSize = 10;
+  var PIN_SIZE = 10;
+
   // поиск минимальной цены в каталоге
-  var findMinPrice = function (catalogData) {
-    var min = catalogData[0].price;
-    for (var i = 0; i < catalogData.length; i++) {
-      if (catalogData[i].price < min) {
-        min = catalogData[i].price;
+  var findMinPrice = function (cardsData) {
+    var min = cardsData[0].price;
+    for (var i = 0; i < cardsData.length; i++) {
+      if (cardsData[i].price < min) {
+        min = cardsData[i].price;
       }
     }
     return min;
   };
 
   // поиск максиальной цены в каталоге
-  var findMaxPrice = function (catalogData) {
-    var max = catalogData[0].price;
-    for (var i = 0; i < catalogData.length; i++) {
-      if (catalogData[i].price > max) {
-        max = catalogData[i].price;
+  var findMaxPrice = function (cardsData) {
+    var max = cardsData[0].price;
+    for (var i = 0; i < cardsData.length; i++) {
+      if (cardsData[i].price > max) {
+        max = cardsData[i].price;
       }
     }
     return max;
   };
 
   // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
-  var findItemById = function (idValue, list) {
-    var idValueInt = parseInt(idValue, 10);
-    for (var i = 0; i < list.length; i++) {
-      if (list[i].id === idValueInt) {
-        return list[i];
-      }
-    }
-    return undefined;
-  };
 
   // обработчик кликов - работа кнопок в избранное и в корзину
   var onCatalogCardClick = function (evt) {
@@ -69,10 +61,11 @@
     var btnChart = currentCard.querySelector('.card__btn'); // кнопка в корзину
     var id = parseInt(currentCard.getAttribute('id'), 10); // сохраняем id товара из карточки
     var goodsInCatalogItem = window.data.goodsInCatalog[id]; // найдем в каталоге товар соответствующий карточке
+    var cardInOrder = goodsCards.querySelector('[id="' + id + '"]'); // найдем карточку в каталоге соответствующую карточке в корзине
     if (evt.target === btnChart) { // если клик по кнопке в корзину
       evt.preventDefault();
       if (goodsInCatalogItem.amount >= 1) { // проверяем есть ли товар в каталоге
-        var goodsInOrderItem = findItemById(id, window.data.goodsInOrder); // пробуем найти в корзине товар соответствующий карточке
+        var goodsInOrderItem = window.data.findItemById(id, window.data.goodsInOrder); // пробуем найти в корзине товар соответствующий карточке
         if (goodsInOrderItem === undefined) { // если товара в корзине нет
           goodsInOrderItem = Object.assign({}, goodsInCatalogItem); // создаем объект и копируем в него данные из карточки товара
           delete goodsInOrderItem.amount; // удаляем ненужный ключ
@@ -83,7 +76,6 @@
         }
         goodsInOrderItem.orderedAmount++; // увеличим количество товара в объекте в корзине
         goodsInCatalogItem.amount--; // уменьшим количество товара в объекте в каталоге
-        var cardInOrder = goodsCards.querySelector('[id="' + id + '"]');
         cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount; // обновим количество товара в карточке корзина
         goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
         document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
@@ -176,7 +168,7 @@
 
   // функция расчета цены по положению пина
   var calculatePrice = function (x) {
-    var relativePositionInPercent = Math.round((x * 100) / (range - pinSize)); // вычисляю положение в % от начала
+    var relativePositionInPercent = Math.round((x * 100) / (range - PIN_SIZE)); // вычисляю положение в % от начала
     return Math.round((window.data.maxPrice - window.data.minPrice) * (relativePositionInPercent / 100) + window.data.minPrice); // вычисляю цену
   };
 
@@ -188,14 +180,14 @@
       var pinCurrent = pinStart - (downEvt.clientX - moveEvt.clientX); // рассчитываем положение пина по сдвигу мыши и начальному положению
       if (pin === leftPin && pinCurrent >= 0 && pinCurrent < rightPin.offsetLeft) { // если пин левый
         pin.style.left = pinCurrent + 'px'; // двигаю пин
-        window.filters.activeFilters.minPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
-        rangePriceMin.textContent = window.filters.activeFilters.minPrice; // обновляю текстовое поле под пином
+        window.filters.activeFilter.minPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
+        rangePriceMin.textContent = window.filters.activeFilter.minPrice; // обновляю текстовое поле под пином
         rangeFillLine.style.left = (pinCurrent + 10) + 'px'; // обновляю филллайн
       }
-      if (pin === rightPin && pinCurrent > leftPin.offsetLeft && pinCurrent <= (range - pinSize)) { // если пин правый
+      if (pin === rightPin && pinCurrent > leftPin.offsetLeft && pinCurrent <= (range - PIN_SIZE)) { // если пин правый
         pin.style.left = pinCurrent + 'px'; // двигаю пин
-        window.filters.activeFilters.maxPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
-        rangePriceMax.textContent = window.filters.activeFilters.maxPrice; // обновляю текстовое поле под пином
+        window.filters.activeFilter.maxPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
+        rangePriceMax.textContent = window.filters.activeFilter.maxPrice; // обновляю текстовое поле под пином
         rangeFillLine.style.right = (range - pinCurrent) + 'px'; // обновляю филллайн
       }
     };
@@ -222,8 +214,8 @@
         filterForm[i].checked = false;
       }
       window.backend.disableControls();
-      window.filters.activeFilters.minPrice = 0;
-      window.filters.activeFilters.maxPrice = 90;
+      window.filters.activeFilter.minPrice = 0;
+      window.filters.activeFilter.maxPrice = 90;
       window.data.initSlider();
     }
     if (filterAvailabilityInput.checked || filterFavoriteInput.checked) {
@@ -248,9 +240,6 @@
   var refreshOnFilterChange = function () {
     window.data.goodsFiltered = window.filters.filterAndSortCatalog(window.data.goodsInCatalog); // прогняем данные через фильтр (согласно состоянию фильтров)
     refreshCatalog(window.data.goodsFiltered); // отрисовываем карточки заново
-    // document.querySelector('span.range__count').textContent = '(' + window.data.goodsFiltered.length + ')'; // обновляем счетчик товаров в диапазоне
-    // window.data.updateInStockCounter(window.data.goodsFiltered); // обновляем счетчик товара в наличии
-    // window.data.updateFavoriteCounter(window.data.goodsFiltered); // обновляем счетчик товаров в избранном
     if (window.data.goodsFiltered.length === 0) { // если фильтры слишком строгие
       showEmptyFilterMessage(); // показываем сообщение
     }
