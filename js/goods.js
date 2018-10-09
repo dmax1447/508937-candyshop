@@ -61,7 +61,6 @@
     var btnChart = currentCard.querySelector('.card__btn'); // кнопка в корзину
     var id = parseInt(currentCard.getAttribute('id'), 10); // сохраняем id товара из карточки
     var goodsInCatalogItem = window.data.goodsInCatalog[id]; // найдем в каталоге товар соответствующий карточке
-    var cardInOrder = goodsCards.querySelector('[id="' + id + '"]'); // найдем карточку в каталоге соответствующую карточке в корзине
     if (evt.target === btnChart) { // если клик по кнопке в корзину
       evt.preventDefault();
       if (goodsInCatalogItem.amount >= 1) { // проверяем есть ли товар в каталоге
@@ -76,6 +75,7 @@
         }
         goodsInOrderItem.orderedAmount++; // увеличим количество товара в объекте в корзине
         goodsInCatalogItem.amount--; // уменьшим количество товара в объекте в каталоге
+        var cardInOrder = goodsCards.querySelector('[id="' + id + '"]');
         cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount; // обновим количество товара в карточке корзина
         goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
         document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
