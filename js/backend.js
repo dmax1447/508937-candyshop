@@ -45,15 +45,15 @@
   };
 
   window.backend = {
-    // функция загрузки данных
+    // функция загрузки данных каталога
     loadCatalog: function (onSuccess, onError) {
       makeRequest(onSuccess, onError, GET_URL, 'GET', undefined);
     },
-    // функция отправки данных
+    // функция отправки данных формы
     sendFormData: function (onSuccess, onError, data) {
       makeRequest(onSuccess, onError, POST_URL, 'POST', data);
     },
-    // функция показа окна ошибки при загрузке / отправке
+    // функция показывает модальное окна ошибки при загрузке / отправке
     showError: function (message) {
       var modalError = document.querySelector('.modal--error');
       var messageField = modalError.querySelector('p.modal__message');
@@ -70,7 +70,7 @@
         }
       });
     },
-    // функция показывает окно при успешной отправке формы
+    // функция показывает модальное окно при успешной отправке формы
     showSuccess: function () {
       var modalSuccess = document.querySelector('.modal--success');
       var btnClose = modalSuccess.querySelector('.modal__close');
@@ -85,12 +85,14 @@
         }
       });
     },
-    debounce: function (fun) { // функция debounce
+    // функция debounce
+    debounce: function (fun) {
       if (lastTimeout) {
         window.clearTimeout(lastTimeout);
       }
       lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
     },
+    // функия для выключения контролов формы фильтра
     disableControls: function () {
       inputsFoodType.forEach(function (item) {
         item.setAttribute('disabled', '');
@@ -103,6 +105,7 @@
       });
 
     },
+    // функция для включения контролов формы фильтра
     enableControls: function () {
       inputsFoodType.forEach(function (item) {
         item.removeAttribute('disabled');

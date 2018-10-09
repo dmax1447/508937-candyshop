@@ -84,8 +84,9 @@
 
   // обработчик события "отправить" на форме заказа
   var onFormOrderSubmit = function (evt) {
-    if (formOrder.checkValidity() && (window.data.goodsInOrder.length > 0)) { // проверим, заполнена ли форма правильно, и товар в корзине есть
-      evt.preventDefault();
+    evt.preventDefault();
+    // если форма прошла проверку, в корзине есть товар, номер карты введен верно
+    if (formOrder.checkValidity() && (window.data.goodsInOrder.length > 0) && window.payments.checkCardNumber()) {
       window.backend.sendFormData(window.backend.showSuccess, window.backend.showError, new FormData(formOrder)); // отправляем данные
       formOrder.reset(); // сбрасываем поля формы
       document.querySelector('.payment__card-status').textContent = 'не определен'; // возвращаем текст про номер карты
