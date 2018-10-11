@@ -39,7 +39,7 @@
       return item.isFavorite;
     }
     if (activeFilter.amount) {
-      var itemInCatalog = window.utils.findItemById(item.id, window.data.goodsInCatalog);
+      var itemInCatalog = window.utils.findItemById(item.id, window.utils.goodsInCatalog);
       return itemInCatalog.amount > 0;
     }
 

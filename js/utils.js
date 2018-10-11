@@ -14,7 +14,11 @@
   var inputsSortOrder = filterForm.querySelectorAll('[name="sort"]');
 
   window.utils = {
-
+    goodsInCatalog: [], // массив для хранения данных каталога
+    goodsFiltered: [], // массив для хранения отфильтрованных данных
+    goodsInOrder: [], // массив для хранения данных заказа
+    minPrice: null,
+    maxPrice: null,
     // поиск значения в каталоге по id
     findItemById: function (idValue, list) {
       var idValueInt = parseInt(idValue, 10);
@@ -93,8 +97,8 @@
       rangeFilter.querySelector('.range__btn--right').style.left = RIGHT_PIN_START_POSITION;
       rangeFilter.querySelector('.range__fill-line').style.left = PIN_SIZE + 'px';
       rangeFilter.querySelector('.range__fill-line').style.right = PIN_SIZE + 'px';
-      rangeFilter.querySelector('.range__price--min').textContent = window.data.minPrice;
-      rangeFilter.querySelector('.range__price--max').textContent = window.data.maxPrice;
+      rangeFilter.querySelector('.range__price--min').textContent = window.utils.minPrice;
+      rangeFilter.querySelector('.range__price--max').textContent = window.utils.maxPrice;
     },
 
     // функция устанавливает карточке товара в каталоге класс доступности в зависимости от количества

@@ -26,22 +26,6 @@
         });
       }
     }
-  //   if (evt.target === btnPaymentCard) { // если выбрана оплата картой
-  //     window.payments.selectedPaymentMethod = 'card';
-  //     paymentByCardTab.classList.remove('visually-hidden'); // таб оплата картой показываем
-  //     paymentByCashTab.classList.add('visually-hidden'); // таб оплата налом скрываем
-  //     paymentCardInputs.forEach(function (input) {
-  //       input.removeAttribute('disabled');
-  //     });
-  //   }
-  //   if (evt.target === btnPaymentCash) { // если нал - все наооброт
-  //     window.payments.selectedPaymentMethod = 'cash';
-  //     paymentByCashTab.classList.remove('visually-hidden');
-  //     paymentByCardTab.classList.add('visually-hidden');
-  //     paymentCardInputs.forEach(function (input) {
-  //       input.setAttribute('disabled', '');
-  //     });
-  //   }
   };
 
   // обработчик проверки номера карты после ввода

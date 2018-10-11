@@ -15,8 +15,8 @@
 
   // обработчик кликов по элементам карточки в корзине
   var onOrderCardClick = function (evt) {
-    var orderData = window.data.goodsInOrder;
-    var catalogData = window.data.goodsInCatalog;
+    var orderData = window.utils.goodsInOrder;
+    var catalogData = window.utils.goodsInCatalog;
     var currentCard = evt.currentTarget; // карточка по которой кликнул
     var id = currentCard.getAttribute('id'); // получаем id товара по которуму кликнули
     var goodsInOrderItem = window.utils.findItemById(id, orderData); // находим объект-товар в массиве-каталоге
@@ -73,8 +73,8 @@
 
   // функция показывает окно с количеством и стоимостью товаров в корзине
   var showCostOfGoods = function () {
-    var totalPrice = calculateCost(window.data.goodsInOrder); // считаем общую стоимость
-    var totalCount = window.data.goodsInOrder.length; // сохранияем количество
+    var totalPrice = calculateCost(window.utils.goodsInOrder); // считаем общую стоимость
+    var totalCount = window.utils.goodsInOrder.length; // сохранияем количество
     document.querySelector('.goods__total').classList.remove('visually-hidden'); // показываем блок
     var totalCountElement = document.querySelector('.goods__total-count'); // и в нужные поля показываем данные
     totalCountElement.childNodes[0].textContent = 'Итого за ' + totalCount + ' товаров';
@@ -85,7 +85,7 @@
   var onFormOrderSubmit = function (evt) {
     evt.preventDefault();
     // если форма валидка и товар есть в корзине
-    if (formOrder.checkValidity && (window.data.goodsInOrder.length > 0)) {
+    if (formOrder.checkValidity && (window.utils.goodsInOrder.length > 0)) {
       // если выбрана оплата картой и карта верна, или выбрана оплата наличными
       if ((window.payments.selectedPaymentMethod === 'card' && window.payments.checkCardNumber()) || window.payments.selectedPaymentMethod === 'cash') {
         window.backend.sendFormData(window.utils.showSuccess, window.utils.showError, new FormData(formOrder)); // отправляем данные

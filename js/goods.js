@@ -60,16 +60,16 @@
     var btnFavorite = currentCard.querySelector('.card__btn-favorite'); // кнопка избранное
     var btnChart = currentCard.querySelector('.card__btn'); // кнопка в корзину
     var id = parseInt(currentCard.getAttribute('id'), 10); // сохраняем id товара из карточки
-    var goodsInCatalogItem = window.data.goodsInCatalog[id]; // найдем в каталоге товар соответствующий карточке
+    var goodsInCatalogItem = window.utils.goodsInCatalog[id]; // найдем в каталоге товар соответствующий карточке
     if (evt.target === btnChart) { // если клик по кнопке в корзину
       evt.preventDefault();
       if (goodsInCatalogItem.amount >= 1) { // проверяем есть ли товар в каталоге
-        var goodsInOrderItem = window.utils.findItemById(id, window.data.goodsInOrder); // пробуем найти в корзине товар соответствующий карточке
+        var goodsInOrderItem = window.utils.findItemById(id, window.utils.goodsInOrder); // пробуем найти в корзине товар соответствующий карточке
         if (goodsInOrderItem === undefined) { // если товара в корзине нет
           goodsInOrderItem = Object.assign({}, goodsInCatalogItem); // создаем объект и копируем в него данные из карточки товара
           delete goodsInOrderItem.amount; // удаляем ненужный ключ
           goodsInOrderItem.orderedAmount = 0; // устанавливаем начальное значение
-          window.data.goodsInOrder.push(goodsInOrderItem); // добавляем созданный объект в массив корзина
+          window.utils.goodsInOrder.push(goodsInOrderItem); // добавляем созданный объект в массив корзина
           var newCard = window.busket.renderCardInBusket(goodsInOrderItem); // отрисуем карточку товара в корзине
           goodsCards.appendChild(newCard); // добавим ее в раздел корзина
         }
@@ -80,7 +80,7 @@
         goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
         document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
       }
-      busketInHeader.textContent = 'В корзине: ' + window.data.goodsInOrder.length;
+      busketInHeader.textContent = 'В корзине: ' + window.utils.goodsInOrder.length;
       window.busket.showCostOfGoods();
       window.busket.enableOrderForm();
       window.utils.setCardClassAmount(currentCard, goodsInCatalogItem.amount);
@@ -151,24 +151,24 @@
       cardsData[i].id = i; // добавим идентификатор id каждой записи
       cardsData[i].isFavorite = false; // и поле избранное
     }
-    window.data.goodsInCatalog = cardsData.slice(); // сохраним копию данных для дальнейшей работы
+    window.utils.goodsInCatalog = cardsData.slice(); // сохраним копию данных для дальнейшей работы
     var catalogFragment = renderCatalog(cardsData); // рендерим каталог по полученным данным
     catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
     catalogLoad.classList.add('visually-hidden'); // блок catalog__load скроем, добавив класс visually-hidden
     catalogCards.appendChild(catalogFragment);
-    window.data.minPrice = findMinPrice(window.data.goodsInCatalog); // сохраним нижнюю границу цены
-    window.data.maxPrice = findMaxPrice(window.data.goodsInCatalog);
-    rangePriceMin.textContent = window.data.minPrice;
-    rangePriceMax.textContent = window.data.maxPrice;
+    window.utils.minPrice = findMinPrice(window.utils.goodsInCatalog); // сохраним нижнюю границу цены
+    window.utils.maxPrice = findMaxPrice(window.utils.goodsInCatalog);
+    rangePriceMin.textContent = window.utils.minPrice;
+    rangePriceMax.textContent = window.utils.maxPrice;
     window.utils.initSlider(); // выставляем начальные значния слайдера
-    window.utils.initFilterCounters(window.data.goodsInCatalog); // выставляем значения счетчиков
+    window.utils.initFilterCounters(window.utils.goodsInCatalog); // выставляем значения счетчиков
     window.busket.disableOrderForm(); // отключаем инпуты доставки
   };
 
   // функция расчета цены по положению пина
   var calculatePrice = function (x) {
     var relativePositionInPercent = Math.round((x * 100) / (range - PIN_SIZE)); // вычисляю положение в % от начала
-    return Math.round((window.data.maxPrice - window.data.minPrice) * (relativePositionInPercent / 100) + window.data.minPrice); // вычисляю цену
+    return Math.round((window.utils.maxPrice - window.utils.minPrice) * (relativePositionInPercent / 100) + window.utils.minPrice); // вычисляю цену
   };
 
   // обработчик перемещения пинов
@@ -237,9 +237,9 @@
 
   // функция обновляет каталог, счетчики, данных о фильтрах
   var refreshOnFilterChange = function () {
-    window.data.goodsFiltered = window.filters.filterAndSortCatalog(window.data.goodsInCatalog); // прогняем данные через фильтр (согласно состоянию фильтров)
-    refreshCatalog(window.data.goodsFiltered); // отрисовываем карточки заново
-    if (window.data.goodsFiltered.length === 0) { // если фильтры слишком строгие
+    window.utils.goodsFiltered = window.filters.filterAndSortCatalog(window.utils.goodsInCatalog); // прогняем данные через фильтр (согласно состоянию фильтров)
+    refreshCatalog(window.utils.goodsFiltered); // отрисовываем карточки заново
+    if (window.utils.goodsFiltered.length === 0) { // если фильтры слишком строгие
       showEmptyFilterMessage(); // показываем сообщение
     }
   };
