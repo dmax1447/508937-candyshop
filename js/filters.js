@@ -67,7 +67,6 @@
 
   // вспомогателльная функция для фильтрации, проверяет товар на соответствие по составу
   var checkFoodPropertyInFilters = function (item) {
-    // если в товаре есть сахар и в фильтре есть критерий "без" сахара
     var isSugerFree = true;
     var isGlutenFree = true;
     var isVegetarian = true;
