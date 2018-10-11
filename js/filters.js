@@ -39,7 +39,7 @@
       return item.isFavorite;
     }
     if (activeFilter.amount) {
-      var itemInCatalog = window.data.findItemById(item.id, window.data.goodsInCatalog);
+      var itemInCatalog = window.utils.findItemById(item.id, window.data.goodsInCatalog);
       return itemInCatalog.amount > 0;
     }
 
@@ -68,18 +68,23 @@
   // вспомогателльная функция для фильтрации, проверяет товар на соответствие по составу
   var checkFoodPropertyInFilters = function (item) {
     // если в товаре есть сахар и в фильтре есть критерий "без" сахара
-    if (item.nutritionFacts.sugar && (activeFilter.foodProperties.indexOf('sugar-free') !== -1)) {
-      return false; // товар НЕ проходит
-    }
-    // если у товаре есть глютен и в фильтре есть критерий "без" сахара
-    if (item.nutritionFacts.gluten && (activeFilter.foodProperties.indexOf('gluten-free') !== -1)) {
-      return false; // товар НЕ проходит
-    }
-    // если товар НЕ вегетарианский а в фильтре есть есть критерий вегетарианский
-    if (!item.nutritionFacts.vegetarian && (activeFilter.foodProperties.indexOf('vegetarian') !== -1)) {
-      return false; // товар НЕ проходит
-    }
-    return true; // если все три условия не сроаботали то товар проходит
+    var isSugerFree = true;
+    var isGlutenFree = true;
+    var isVegetarian = true;
+    activeFilter.foodProperties.forEach(function (foodProperty) {
+      switch (foodProperty) {
+        case 'sugar-free':
+          isSugerFree = !item.nutritionFacts.sugar;
+          break;
+        case 'gluten-free':
+          isGlutenFree = !item.nutritionFacts.gluten;
+          break;
+        case 'vegetarian':
+          isVegetarian = item.nutritionFacts.vegetarian;
+          break;
+      }
+    });
+    return isSugerFree && isGlutenFree && isVegetarian;
   };
 
   // вспомогателльная функция сравнение товаров по цене

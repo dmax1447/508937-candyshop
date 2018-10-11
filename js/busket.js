@@ -19,8 +19,8 @@
     var catalogData = window.data.goodsInCatalog;
     var currentCard = evt.currentTarget; // карточка по которой кликнул
     var id = currentCard.getAttribute('id'); // получаем id товара по которуму кликнули
-    var goodsInOrderItem = window.data.findItemById(id, orderData); // находим объект-товар в массиве-каталоге
-    var goodsInCatalogItem = window.data.findItemById(id, catalogData); // найдем объект-товар в массиве-корзине
+    var goodsInOrderItem = window.utils.findItemById(id, orderData); // находим объект-товар в массиве-каталоге
+    var goodsInCatalogItem = window.utils.findItemById(id, catalogData); // найдем объект-товар в массиве-корзине
     var catalogCardSelector = '[id="' + id + '"]';
     var catalogCard = catalogCards.querySelector(catalogCardSelector);
     var index = orderData.indexOf(goodsInOrderItem); // находим индекс объекта-товара в массиве-корзине
@@ -59,7 +59,7 @@
       enableOrderForm(); // включаем поля формы заказа
       showCostOfGoods(); // включаем и показываем стоимость и количество товара в корхине
     }
-    window.data.setCardClassAmount(catalogCard, goodsInCatalogItem.amount); // выставляем карточке в каталоге класс доступности после операций в корзине
+    window.utils.setCardClassAmount(catalogCard, goodsInCatalogItem.amount); // выставляем карточке в каталоге класс доступности после операций в корзине
 
   };
   // функция суммарную стоимость товаров в корзине
@@ -88,7 +88,7 @@
     if (formOrder.checkValidity && (window.data.goodsInOrder.length > 0)) {
       // если выбрана оплата картой и карта верна, или выбрана оплата наличными
       if ((window.payments.selectedPaymentMethod === 'card' && window.payments.checkCardNumber()) || window.payments.selectedPaymentMethod === 'cash') {
-        window.backend.sendFormData(window.backend.showSuccess, window.backend.showError, new FormData(formOrder)); // отправляем данные
+        window.backend.sendFormData(window.utils.showSuccess, window.utils.showError, new FormData(formOrder)); // отправляем данные
         formOrder.reset(); // сбрасываем поля формы
         document.querySelector('.payment__card-status').textContent = 'не определен'; // возвращаем текст про номер карты
         document.querySelector('.payment__card-wrap').classList.remove('visually-hidden'); // скрываем вкладку наличные

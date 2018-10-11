@@ -1,7 +1,7 @@
 'use strict';
 // модуль каталог
 (function () {
-
+  var PIN_SIZE = 10;
   // служебные данные
   var startsToSyle = {
     1: 'stars__rating--one',
@@ -12,22 +12,22 @@
   };
 
   // элементы интерфейса
+  var catalogSidebar = document.querySelector('.catalog__sidebar');
   var catalogCards = document.querySelector('.catalog__cards'); // блок каталог товаров
   var goodsCards = document.querySelector('.goods__cards'); // блок товары в корзине
-  var catalogLoad = document.querySelector('.catalog__load'); // блок уведомления о загрузке
+  var catalogLoad = catalogCards.querySelector('.catalog__load'); // блок уведомления о загрузке
   var busketInHeader = document.querySelector('.main-header__basket'); // корзинка в заголовке
-  var rangePriceMin = document.querySelector('.range__price--min'); // поле цены левого пина
-  var rangePriceMax = document.querySelector('.range__price--max'); // поле цены правого пина
-  var catalogFilterRange = document.querySelector('.range'); // блок с фильтром
+  var rangePriceMin = catalogSidebar.querySelector('.range__price--min'); // поле цены левого пина
+  var rangePriceMax = catalogSidebar.querySelector('.range__price--max'); // поле цены правого пина
+  var catalogFilterRange = catalogSidebar.querySelector('.range'); // блок с фильтром
   var leftPin = catalogFilterRange.querySelector('.range__btn--left');
   var rightPin = catalogFilterRange.querySelector('.range__btn--right'); // правый пин
-  var filterForm = document.querySelector('form'); // форма фильтра
+  var filterForm = catalogSidebar.querySelector('form'); // форма фильтра
   var rangeFilter = catalogFilterRange.querySelector('.range__filter');
   var range = rangeFilter.clientWidth; // ширина бара фильтра = диапазон
-  var filterFavoriteInput = document.querySelector('#filter-favorite');
-  var filterAvailabilityInput = document.querySelector('#filter-availability');
+  var filterFavoriteInput = catalogSidebar.querySelector('#filter-favorite');
+  var filterAvailabilityInput = catalogSidebar.querySelector('#filter-availability');
   var rangeFillLine = catalogFilterRange.querySelector('.range__fill-line'); // полоска между пинами
-  var PIN_SIZE = 10;
 
   // поиск минимальной цены в каталоге
   var findMinPrice = function (cardsData) {
@@ -64,7 +64,7 @@
     if (evt.target === btnChart) { // если клик по кнопке в корзину
       evt.preventDefault();
       if (goodsInCatalogItem.amount >= 1) { // проверяем есть ли товар в каталоге
-        var goodsInOrderItem = window.data.findItemById(id, window.data.goodsInOrder); // пробуем найти в корзине товар соответствующий карточке
+        var goodsInOrderItem = window.utils.findItemById(id, window.data.goodsInOrder); // пробуем найти в корзине товар соответствующий карточке
         if (goodsInOrderItem === undefined) { // если товара в корзине нет
           goodsInOrderItem = Object.assign({}, goodsInCatalogItem); // создаем объект и копируем в него данные из карточки товара
           delete goodsInOrderItem.amount; // удаляем ненужный ключ
@@ -83,7 +83,7 @@
       busketInHeader.textContent = 'В корзине: ' + window.data.goodsInOrder.length;
       window.busket.showCostOfGoods();
       window.busket.enableOrderForm();
-      window.data.setCardClassAmount(currentCard, goodsInCatalogItem.amount);
+      window.utils.setCardClassAmount(currentCard, goodsInCatalogItem.amount);
     }
     if (evt.target === btnFavorite) { // обработаем клик по кнопке в избранное
       evt.preventDefault();
@@ -108,7 +108,7 @@
     card.setAttribute('id', cardData.id); // добавим карточке id
     card.querySelector('.card__title').textContent = cardData.name;
     card.querySelector('.card__img').src = 'img/cards/' + cardData.picture;
-    window.data.setCardClassAmount(card, cardData.amount);
+    window.utils.setCardClassAmount(card, cardData.amount);
     card.querySelector('.card__price').childNodes[0].textContent = cardData.price + ' ';
     card.querySelector('.card__price').childNodes[2].textContent = '/ ' + cardData.weight + ' Г';
     card.querySelector('.stars__rating').classList.add(startsToSyle[cardData.rating.value]);
@@ -152,7 +152,6 @@
       cardsData[i].isFavorite = false; // и поле избранное
     }
     window.data.goodsInCatalog = cardsData.slice(); // сохраним копию данных для дальнейшей работы
-    // window.data.goodsInCatalogOrigin = cardsData.slice(); // сохраним копию данных для восттановления
     var catalogFragment = renderCatalog(cardsData); // рендерим каталог по полученным данным
     catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
     catalogLoad.classList.add('visually-hidden'); // блок catalog__load скроем, добавив класс visually-hidden
@@ -161,8 +160,8 @@
     window.data.maxPrice = findMaxPrice(window.data.goodsInCatalog);
     rangePriceMin.textContent = window.data.minPrice;
     rangePriceMax.textContent = window.data.maxPrice;
-    window.data.initSlider(); // выставляем начальные значния слайдера
-    window.data.initFilterCounters(window.data.goodsInCatalog); // выставляем значения счетчиков
+    window.utils.initSlider(); // выставляем начальные значния слайдера
+    window.utils.initFilterCounters(window.data.goodsInCatalog); // выставляем значения счетчиков
     window.busket.disableOrderForm(); // отключаем инпуты доставки
   };
 
@@ -192,7 +191,7 @@
       }
     };
     var onPinMouseUp = function () {
-      window.backend.debounce(refreshOnFilterChange); // обновляем информацию о каталоге
+      window.utils.debounce(refreshOnFilterChange); // обновляем информацию о каталоге
       document.removeEventListener('mousemove', onPinMouseMove); // удаляем обработчик "движение мыши"
       document.removeEventListener('mouseup', onPinMouseUp); // удаляем обработчик "отпускание кнопки мыши"
     };
@@ -213,27 +212,27 @@
       for (var i = 0; i <= 8; i++) {
         filterForm[i].checked = false;
       }
-      window.backend.disableControls();
+      window.utils.disableControls();
       window.filters.activeFilter.minPrice = 0;
       window.filters.activeFilter.maxPrice = 90;
-      window.data.initSlider();
+      window.utils.initSlider();
     }
     if (filterAvailabilityInput.checked || filterFavoriteInput.checked) {
-      window.backend.disableControls();
+      window.utils.disableControls();
     }
     if (!filterAvailabilityInput.checked && !filterFavoriteInput.checked) {
-      window.backend.enableControls();
+      window.utils.enableControls();
     }
-    window.backend.debounce(refreshOnFilterChange);
+    window.utils.debounce(refreshOnFilterChange);
   };
 
   // обработчик кнопки "показать все" в фильтрах
   var onFormSubmit = function (evt) {
     evt.preventDefault();
     filterForm.reset();
-    window.backend.enableControls();
-    window.backend.debounce(refreshOnFilterChange);
-    window.data.initSlider();
+    window.utils.enableControls();
+    window.utils.debounce(refreshOnFilterChange);
+    window.utils.initSlider();
   };
 
   // функция обновляет каталог, счетчики, данных о фильтрах
@@ -259,7 +258,7 @@
     catalogCards.appendChild(emptyFiltersMessage);
   };
 
-  window.backend.loadCatalog(onCatalogLoad, window.backend.showError); // пытаемся загрузить каталог, если удачно - то рендерим в список, если нет то выводим сообщение об ошибке
+  window.backend.loadCatalog(onCatalogLoad, window.utils.showError); // пытаемся загрузить каталог, если удачно - то рендерим в список, если нет то выводим сообщение об ошибке
   leftPin.addEventListener('mousedown', onPinMouseDown); // нажатие кнопки мыши на левый пин
   rightPin.addEventListener('mousedown', onPinMouseDown); // нажатие кнопки мыши на правый пин
   filterForm.addEventListener('change', onFormChange); // на изменения в форме фильтра

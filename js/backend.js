@@ -11,14 +11,6 @@
     NOT_FROUND_ERROR: 404,
     SERVER_ERROR: 500
   };
-  var ESC_KEYCODE = 27;
-  var DEBOUNCE_INTERVAL = 500;
-  var lastTimeout;
-  var filterForm = document.querySelector('form'); // форма фильтра
-  var inputsFoodType = filterForm.querySelectorAll('[name="food-type"]');
-  var inputsFoodProperty = filterForm.querySelectorAll('[name="food-property"]');
-  var inputsSortOrder = filterForm.querySelectorAll('[name="sort"]');
-
 
   // функция выполнения запроса, принимает параметры:
   // onSuccses: коллбек на успешное завершение запроса, onError: коллбек на НЕуспешное завершение запроса
@@ -52,80 +44,6 @@
     // функция отправки данных формы
     sendFormData: function (onSuccess, onError, data) {
       makeRequest(onSuccess, onError, POST_URL, 'POST', data);
-    },
-    // функция показывает модальное окна ошибки при загрузке / отправке
-    showError: function (message) {
-      var modalError = document.querySelector('.modal--error');
-      var messageField = modalError.querySelector('p.modal__message');
-      var btnClose = modalError.querySelector('.modal__close');
-      messageField.textContent = message;
-      var onBtnCloseClick = function () {
-        modalError.classList.add('modal--hidden');
-        btnClose.removeEventListener('click', onBtnCloseClick);
-        document.removeEventListener('keydown', onBtnEscClick);
-      };
-      var onBtnEscClick = function (evt) {
-        if (evt.keyCode === ESC_KEYCODE) {
-          modalError.classList.add('modal--hidden');
-          btnClose.removeEventListener('click', onBtnCloseClick);
-          document.removeEventListener('keydown', onBtnEscClick);
-        }
-      };
-      modalError.classList.remove('modal--hidden');
-      btnClose.addEventListener('click', onBtnCloseClick);
-      document.addEventListener('keydown', onBtnEscClick);
-    },
-    // функция показывает модальное окно при успешной отправке формы
-    showSuccess: function () {
-      var modalSuccess = document.querySelector('.modal--success');
-      var btnClose = modalSuccess.querySelector('.modal__close');
-      var onBtnCloseClick = function () {
-        modalSuccess.classList.add('modal--hidden');
-        btnClose.removeEventListener('click', onBtnCloseClick);
-        document.removeEventListener('keydown', onBtnEscClick);
-      };
-      var onBtnEscClick = function (evt) {
-        if (evt.keyCode === ESC_KEYCODE) {
-          modalSuccess.classList.add('modal--hidden');
-          btnClose.removeEventListener('click', onBtnCloseClick);
-          document.removeEventListener('keydown', onBtnEscClick);
-        }
-      };
-      modalSuccess.classList.remove('modal--hidden');
-      btnClose.addEventListener('click', onBtnCloseClick);
-      document.addEventListener('keydown', onBtnEscClick);
-    },
-    // функция debounce
-    debounce: function (fun) {
-      if (lastTimeout) {
-        window.clearTimeout(lastTimeout);
-      }
-      lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
-    },
-    // функия для выключения контролов формы фильтра
-    disableControls: function () {
-      inputsFoodType.forEach(function (item) {
-        item.setAttribute('disabled', '');
-      });
-      inputsFoodProperty.forEach(function (item) {
-        item.setAttribute('disabled', '');
-      });
-      inputsSortOrder.forEach(function (item) {
-        item.setAttribute('disabled', '');
-      });
-
-    },
-    // функция для включения контролов формы фильтра
-    enableControls: function () {
-      inputsFoodType.forEach(function (item) {
-        item.removeAttribute('disabled');
-      });
-      inputsFoodProperty.forEach(function (item) {
-        item.removeAttribute('disabled');
-      });
-      inputsSortOrder.forEach(function (item) {
-        item.removeAttribute('disabled');
-      });
     }
   };
 

@@ -6,11 +6,11 @@
   var deliveryToggle = deliverySection.querySelector('.deliver__toggle'); // раздел выбор метода доставки
   var tabDeliverStore = deliverySection.querySelector('.deliver__store');
   var tabDeliverCourier = deliverySection.querySelector('.deliver__courier');
-  var btnDeliverStores = deliverySection.querySelector('#deliver__store');
-  var btnDeliverCourier = deliverySection.querySelector('#deliver__courier');
-  var deliveryStoreList = document.querySelector('.deliver__store-list');
-  var fieldsetDilverStores = document.querySelector('.deliver__stores');
-  var fieldsetDilverCourier = document.querySelector('.deliver__entry-fields-wrap');
+
+  var deliveryStoreList = deliverySection.querySelector('.deliver__store-list');
+  var fieldsetDilverStores = tabDeliverStore.querySelector('fieldset');
+  var fieldsetDilverCourier = tabDeliverCourier.querySelector('fieldset');
+  var courierDescription = tabDeliverCourier.querySelector('.deliver__textarea');
   // мапа соответствия адреса магазина его названию
   var inputStoreNamesToAdress = {
     academicheskaya: 'проспект Науки, д. 19, корп. 3, литер А, ТК «Платформа», 3-й этаж, секция 310',
@@ -27,17 +27,17 @@
 
   // обработчик кликов по табам выбора метода доставки
   var onDeliveryBtnsClick = function (evt) {
-    if (evt.target === btnDeliverStores) { // если клик по "заеду в магаз"
-      tabDeliverStore.classList.remove('visually-hidden'); // показываем блок доставки в магаз
-      tabDeliverCourier.classList.add('visually-hidden'); // скрываем блок доставки курьером
-      fieldsetDilverStores.removeAttribute('disabled'); // включаем раздел "доставка в магазин" в форме заказа
-      fieldsetDilverCourier.setAttribute('disabled', ''); // отключаем раздел "доставить курьером" в форме заказа
-    }
-    if (evt.target === btnDeliverCourier) { // если клик по "заберу курьером"
-      tabDeliverStore.classList.add('visually-hidden');
-      tabDeliverCourier.classList.remove('visually-hidden');
-      fieldsetDilverStores.setAttribute('disabled', '');
-      fieldsetDilverCourier.removeAttribute('disabled');
+    var hiddenTab = deliverySection.querySelector('div.visually-hidden');
+    if (evt.target.tagName === 'INPUT' && hiddenTab.classList.contains(evt.target.id)) { // если нажатая кнопка и скрытый таб совпадают
+      tabDeliverStore.classList.toggle('visually-hidden');
+      tabDeliverCourier.classList.toggle('visually-hidden');
+      (evt.target.id === 'deliver__store' ? fieldsetDilverStores : fieldsetDilverCourier).removeAttribute('disabled');
+      (evt.target.id === 'deliver__store' ? fieldsetDilverCourier : fieldsetDilverStores).setAttribute('disabled', '');
+      if (evt.target.id === 'deliver__store') {
+        courierDescription.setAttribute('disabled', '');
+      } else {
+        courierDescription.removeAttribute('disabled');
+      }
     }
   };
 
