@@ -4,8 +4,6 @@
   var paymentSection = document.querySelector('section.payment');
   var cardNumberInput = paymentSection.querySelector('#payment__card-number'); // инупут для ввода номера карты
   var paymentToggle = paymentSection.querySelector('.payment__method'); // блок с переключателями выбора метода оплаты
-  // var btnPaymentCard = paymentToggle.querySelector('#payment__card'); // кнопка оплаты картой
-  // var btnPaymentCash = paymentToggle.querySelector('#payment__cash'); // кнопка оплаты наличиными
   var paymentByCardTab = paymentSection.querySelector('.payment__card-wrap'); // блок оплаты картой
   var paymentByCashTab = paymentSection.querySelector('.payment__cash-wrap'); // блок оплаты наличными
   var paymentCardInputs = paymentByCardTab.querySelectorAll('input'); // все инпуты оплаты картой
@@ -27,11 +25,6 @@
       }
     }
   };
-
-  // обработчик проверки номера карты после ввода
-  cardNumberInput.addEventListener('blur', function () { // добавим валидацию карты на поле с номером карты
-    document.querySelector('.payment__card-status').textContent = window.payments.checkCardNumber() ? 'Одобрен' : 'Не определен';
-  });
 
   paymentToggle.addEventListener('click', onPaymentToggleClick); // добавим разделу выбора метода оплаты обработчик
 

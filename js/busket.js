@@ -12,6 +12,20 @@
   var fieldsetDilverCourier = document.querySelector('.deliver__entry-fields-wrap'); // набор инутов в разделе доставка
   var tabDeliverStore = document.querySelector('.deliver__store'); // таб доставки в магазины
   var btnSubmit = document.querySelector('.buy__submit-btn'); // кнопка отправить форму
+  // карта инпуты
+  var paymentSection = document.querySelector('section.payment');
+  var cardDate = paymentSection.querySelector('#payment__card-date'); // инпут даты карты
+  var cardCVC = paymentSection.querySelector('#payment__card-cvc');
+  var cardHolderName = paymentSection.querySelector('#payment__cardholder');
+  var cardStatus = paymentSection.querySelector('.payment__card-status');
+  var cardErrorMessage = paymentSection.querySelector('.payment__error-message');
+  var cardState = {
+    'номер карты': true,
+    'срок действия': true,
+    'имя владельца': true,
+    'CVC': true,
+  };
+  var isCardValid = false;
 
   // обработчик кликов по элементам карточки в корзине
   var onOrderCardClick = function (evt) {
@@ -87,7 +101,7 @@
     // если форма валидка и товар есть в корзине
     if (formOrder.checkValidity && (window.utils.goodsInOrder.length > 0)) {
       // если выбрана оплата картой и карта верна, или выбрана оплата наличными
-      if ((window.payments.selectedPaymentMethod === 'card' && window.payments.checkCardNumber()) || window.payments.selectedPaymentMethod === 'cash') {
+      if ((window.payments.selectedPaymentMethod === 'card' && isCardValid) || window.payments.selectedPaymentMethod === 'cash') {
         window.backend.sendFormData(window.utils.showSuccess, window.utils.showError, new FormData(formOrder)); // отправляем данные
         formOrder.reset(); // сбрасываем поля формы
         document.querySelector('.payment__card-status').textContent = 'не определен'; // возвращаем текст про номер карты
@@ -120,9 +134,32 @@
     }
   };
 
+  var onFormOrderChange = function () {
+    cardState['номер карты'] = window.payments.checkCardNumber();
+    cardState['срок действия'] = cardDate.checkValidity();
+    cardState['CVC'] = cardCVC.checkValidity();
+    cardState['имя владельца'] = cardHolderName.checkValidity();
+    isCardValid = cardState['номер карты'] && cardState['срок действия'] && cardState['CVC'] && cardState['имя владельца'];
+
+    if (isCardValid) {
+      cardErrorMessage.classList.add('visually-hidden');
+      cardStatus.textContent = 'Одобрен';
+    } else {
+      var checkFields = 'Проверьте поля: ';
+      for (var prop in cardState) {
+        if (cardState[prop] === false) {
+          checkFields += (' ' + prop);
+        }
+      }
+      cardErrorMessage.classList.remove('visually-hidden');
+      cardErrorMessage.textContent = checkFields;
+      cardStatus.textContent = 'Не определен';
+    }
+  };
+
   // добавляем обработчик события отправить на форму
   formOrder.addEventListener('submit', onFormOrderSubmit);
-
+  formOrder.addEventListener('change', onFormOrderChange);
   // экспорт:
   window.busket = {
     renderCardInBusket: function (cardData) {
