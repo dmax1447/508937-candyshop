@@ -11,13 +11,6 @@
     NOT_FROUND_ERROR: 404,
     SERVER_ERROR: 500
   };
-  var DEBOUNCE_INTERVAL = 500;
-  var lastTimeout;
-  var filterForm = document.querySelector('form'); // форма фильтра
-  var inputsFoodType = filterForm.querySelectorAll('[name="food-type"]');
-  var inputsFoodProperty = filterForm.querySelectorAll('[name="food-property"]');
-  var inputsSortOrder = filterForm.querySelectorAll('[name="sort"]');
-
 
   // функция выполнения запроса, принимает параметры:
   // onSuccses: коллбек на успешное завершение запроса, onError: коллбек на НЕуспешное завершение запроса
@@ -44,65 +37,14 @@
   };
 
   window.backend = {
-    // функция загрузки данных
+    // функция загрузки данных каталога
     loadCatalog: function (onSuccess, onError) {
       makeRequest(onSuccess, onError, GET_URL, 'GET', undefined);
     },
-    // функция отправки данных
+    // функция отправки данных формы
     sendFormData: function (onSuccess, onError, data) {
       makeRequest(onSuccess, onError, POST_URL, 'POST', data);
-    },
-    // функция показа окна ошибки
-    showError: function (message) {
-      var modalError = document.querySelector('.modal--error');
-      var messageField = modalError.querySelector('p.modal__message');
-      var btnClose = modalError.querySelector('.modal__close');
-      messageField.textContent = message;
-      var onBtnCloseClick = function () {
-        modalError.classList.add('modal--hidden');
-      };
-      modalError.classList.remove('modal--hidden');
-      btnClose.addEventListener('click', onBtnCloseClick);
-    },
-    showSuccess: function () {
-      var modalSuccess = document.querySelector('.modal--success');
-      var btnClose = modalSuccess.querySelector('.modal__close');
-      var onBtnCloseClick = function () {
-        modalSuccess.classList.add('modal--hidden');
-      };
-      modalSuccess.classList.remove('modal--hidden');
-      btnClose.addEventListener('click', onBtnCloseClick);
-    },
-    debounce: function (fun) { // функция debounce
-      if (lastTimeout) {
-        window.clearTimeout(lastTimeout);
-      }
-      lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
-    },
-    disableControls: function () {
-      inputsFoodType.forEach(function (item) {
-        item.setAttribute('disabled', '');
-      });
-      inputsFoodProperty.forEach(function (item) {
-        item.setAttribute('disabled', '');
-      });
-      inputsSortOrder.forEach(function (item) {
-        item.setAttribute('disabled', '');
-      });
-
-    },
-    enableControls: function () {
-      inputsFoodType.forEach(function (item) {
-        item.removeAttribute('disabled');
-      });
-      inputsFoodProperty.forEach(function (item) {
-        item.removeAttribute('disabled');
-      });
-      inputsSortOrder.forEach(function (item) {
-        item.removeAttribute('disabled');
-      });
     }
-
   };
 
 })();
