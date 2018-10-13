@@ -2,6 +2,8 @@
 // модуль каталог
 (function () {
   var PIN_SIZE = 10;
+  var MIN_PRICE = 0;
+  var MAX_PRICE = 90;
   // служебные данные
   var startsToSyle = {
     1: 'stars__rating--one',
@@ -213,8 +215,8 @@
         filterForm[i].checked = false;
       }
       window.utils.disableControls();
-      window.filters.minPrice = 0;
-      window.filters.maxPrice = 90;
+      window.filters.minPrice = MIN_PRICE;
+      window.filters.maxPrice = MAX_PRICE;
       window.utils.initSlider();
     }
     if (filterAvailabilityInput.checked || filterFavoriteInput.checked) {
