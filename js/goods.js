@@ -14,7 +14,7 @@
   };
 
   // элементы интерфейса
-  var catalogSidebar = document.querySelector('.catalog__sidebar');
+  var catalogSidebar = document.querySelector('.catalog__sidebar'); // блок фильтров
   var catalogCards = document.querySelector('.catalog__cards'); // блок каталог товаров
   var goodsCards = document.querySelector('.goods__cards'); // блок товары в корзине
   var catalogLoad = catalogCards.querySelector('.catalog__load'); // блок уведомления о загрузке
@@ -52,8 +52,6 @@
     }
     return max;
   };
-
-  // функция поиска товара в списке. передаем id товара и список где искать. вернет товар или undefind если его нет
 
   // обработчик кликов - работа кнопок в избранное и в корзину
   var onCatalogCardClick = function (evt) {
@@ -173,26 +171,28 @@
     return Math.round((window.utils.maxPrice - window.utils.minPrice) * (relativePositionInPercent / 100) + window.utils.minPrice); // вычисляю цену
   };
 
-  // обработчик перемещения пинов
-  var onPinMouseDown = function (downEvt) { // при нажатии запоминаем пин и его позицию
+  // обработка движения пина
+  var onPinMouseDown = function (downEvt) {
     var pin = downEvt.target;
-    var pinStart = pin.offsetLeft;
+    var pinPosition = {
+      min: pin === leftPin ? 0 : leftPin.offsetLeft,
+      max: pin === leftPin ? rightPin.offsetLeft : (range - PIN_SIZE),
+      current: null,
+      start: pin.offsetLeft
+    };
+    var rangePrice = pin === leftPin ? rangePriceMin : rangePriceMax;
+
     var onPinMouseMove = function (moveEvt) {
-      var pinCurrent = pinStart - (downEvt.clientX - moveEvt.clientX); // рассчитываем положение пина по сдвигу мыши и начальному положению
-      if (pin === leftPin && pinCurrent >= 0 && pinCurrent < rightPin.offsetLeft) { // если пин левый
-        pin.style.left = pinCurrent + 'px'; // двигаю пин
-        window.filters.minPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
-        rangePriceMin.textContent = window.filters.minPrice; // обновляю текстовое поле под пином
-        rangeFillLine.style.left = (pinCurrent + 10) + 'px'; // обновляю филллайн
-      }
-      if (pin === rightPin && pinCurrent > leftPin.offsetLeft && pinCurrent <= (range - PIN_SIZE)) { // если пин правый
-        pin.style.left = pinCurrent + 'px'; // двигаю пин
-        window.filters.maxPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
-        rangePriceMax.textContent = window.filters.maxPrice; // обновляю текстовое поле под пином
-        rangeFillLine.style.right = (range - pinCurrent) + 'px'; // обновляю филллайн
+      pinPosition.current = pinPosition.start - (downEvt.clientX - moveEvt.clientX);
+      if (pinPosition.current >= pinPosition.min && pinPosition.current <= pinPosition.max) {
+        pin.style.left = pinPosition.current + 'px'; // двигаю пин
+        rangeFillLine.style[(pin === leftPin ? 'left' : 'right')] = (pin === leftPin ? pinPosition.current + PIN_SIZE : range - pinPosition.current) + 'px';
+        rangePrice.textContent = calculatePrice(pinPosition.current); // обновляем поле с ценой
       }
     };
+
     var onPinMouseUp = function () {
+      window.filters[pin === leftPin ? 'minPrice' : 'maxPrice'] = rangePrice.textContent;
       window.utils.debounce(refreshOnFilterChange); // обновляем информацию о каталоге
       document.removeEventListener('mousemove', onPinMouseMove); // удаляем обработчик "движение мыши"
       document.removeEventListener('mouseup', onPinMouseUp); // удаляем обработчик "отпускание кнопки мыши"
