@@ -12,6 +12,14 @@
     'Зефир': 'marshmallows'
   };
 
+  var activeFilter = {
+    foodTypes: null,
+    foodProperties: null,
+    sortOrder: null,
+    isFavorite: false,
+    amount: false,
+  };
+
   // функция обновления состояния фильтра
   var getFiltersAndSortOrder = function () {
     var activeInputsByFoodType = filterForm.querySelectorAll('[name="food-type"]:checked'); // находим включеные инпуты фильтра по типу
@@ -53,7 +61,7 @@
     } else {
       isFoodPropertyMatch = true;
     }
-    if (item.price >= activeFilter.minPrice && item.price <= activeFilter.maxPrice) {
+    if (item.price >= window.filters.minPrice && item.price <= window.filters.maxPrice) {
       isPriceMatched = true;
     }
     return isFoodTypeMatch && isFoodPropertyMatch && isPriceMatched;
@@ -155,18 +163,11 @@
     getFiltersAndSortOrder();
     return data.filter(filterGoods).sort(sortByFormSelection);
   };
+
   window.filters = {
-    activeFilter: {
-      foodTypes: null,
-      foodProperties: null,
-      sortOrder: null,
-      isFavorite: false,
-      amount: false,
-      minPrice: 0,
-      maxPrice: 90
-    },
+    minPrice: 0,
+    maxPrice: 90,
     filterAndSortCatalog: filterAndSortCatalog
   };
-  var activeFilter = window.filters.activeFilter; // шорткат для удобства
 
 })();

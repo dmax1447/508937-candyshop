@@ -179,14 +179,14 @@
       var pinCurrent = pinStart - (downEvt.clientX - moveEvt.clientX); // рассчитываем положение пина по сдвигу мыши и начальному положению
       if (pin === leftPin && pinCurrent >= 0 && pinCurrent < rightPin.offsetLeft) { // если пин левый
         pin.style.left = pinCurrent + 'px'; // двигаю пин
-        window.filters.activeFilter.minPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
-        rangePriceMin.textContent = window.filters.activeFilter.minPrice; // обновляю текстовое поле под пином
+        window.filters.minPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
+        rangePriceMin.textContent = window.filters.minPrice; // обновляю текстовое поле под пином
         rangeFillLine.style.left = (pinCurrent + 10) + 'px'; // обновляю филллайн
       }
       if (pin === rightPin && pinCurrent > leftPin.offsetLeft && pinCurrent <= (range - PIN_SIZE)) { // если пин правый
         pin.style.left = pinCurrent + 'px'; // двигаю пин
-        window.filters.activeFilter.maxPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
-        rangePriceMax.textContent = window.filters.activeFilter.maxPrice; // обновляю текстовое поле под пином
+        window.filters.maxPrice = calculatePrice(pinCurrent); // вычисляю текущую цену и сохраняю в объекте window.filters
+        rangePriceMax.textContent = window.filters.maxPrice; // обновляю текстовое поле под пином
         rangeFillLine.style.right = (range - pinCurrent) + 'px'; // обновляю филллайн
       }
     };
@@ -213,8 +213,8 @@
         filterForm[i].checked = false;
       }
       window.utils.disableControls();
-      window.filters.activeFilter.minPrice = 0;
-      window.filters.activeFilter.maxPrice = 90;
+      window.filters.minPrice = 0;
+      window.filters.maxPrice = 90;
       window.utils.initSlider();
     }
     if (filterAvailabilityInput.checked || filterFavoriteInput.checked) {
