@@ -12,13 +12,22 @@
   var fieldsetDilverCourier = document.querySelector('.deliver__entry-fields-wrap'); // набор инутов в разделе доставка
   var tabDeliverStore = document.querySelector('.deliver__store'); // таб доставки в магазины
   var btnSubmit = document.querySelector('.buy__submit-btn'); // кнопка отправить форму
-  // карта инпуты
+  // инпуты таба оплата картой
   var paymentSection = document.querySelector('section.payment');
-  var cardDate = paymentSection.querySelector('#payment__card-date'); // инпут даты карты
+  var cardDate = paymentSection.querySelector('#payment__card-date');
   var cardCVC = paymentSection.querySelector('#payment__card-cvc');
   var cardHolderName = paymentSection.querySelector('#payment__cardholder');
   var cardStatus = paymentSection.querySelector('.payment__card-status');
   var cardErrorMessage = paymentSection.querySelector('.payment__error-message');
+
+
+  var totalCountElement = document.querySelector('.goods__total-count');
+  //
+  var goodsCardsEmpty = document.querySelector('.goods__card-empty'); // блок сообщение пустая корзина
+  var goodsTotal = document.querySelector('.goods__total'); // блок общая сумма покупок
+  var paymentCardTab = document.querySelector('.payment__card-wrap'); // таб оплата картой
+  var paymentCashTab = document.querySelector('.payment__cash-wrap'); // таб оплата налом
+
   var cardState = {
     'номер карты': true,
     'срок действия': true,
@@ -64,9 +73,9 @@
     }
     if (orderData.length === 0) { // если после действий в заказе не осталось товаров:
       goodsCards.classList.add('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
-      document.querySelector('.goods__card-empty').classList.remove('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
+      goodsCardsEmpty.classList.remove('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
       busketInHeader.textContent = 'В корзине пусто! '; // сообщение в блок корзины в заголовке
-      document.querySelector('.goods__total').classList.add('visually-hidden'); // скрыть блок суммарной стоимости/количества товара в корзине
+      goodsTotal.classList.add('visually-hidden'); // скрыть блок суммарной стоимости/количества товара в корзине
       disableOrderForm(); // отключить поля формы заказа
     } else { // если после действий в заказе есть товары
       busketInHeader.textContent = 'В корзине: ' + orderData.length; // обновляем блок корзина в заголовке
@@ -89,8 +98,7 @@
   var showCostOfGoods = function () {
     var totalPrice = calculateCost(window.utils.goodsInOrder); // считаем общую стоимость
     var totalCount = window.utils.goodsInOrder.length; // сохранияем количество
-    document.querySelector('.goods__total').classList.remove('visually-hidden'); // показываем блок
-    var totalCountElement = document.querySelector('.goods__total-count'); // и в нужные поля показываем данные
+    goodsTotal.classList.remove('visually-hidden'); // показываем блок
     totalCountElement.childNodes[0].textContent = 'Итого за ' + totalCount + ' товаров';
     totalCountElement.childNodes[1].textContent = totalPrice + ' ₽';
   };
@@ -104,9 +112,9 @@
       if ((window.payments.selectedPaymentMethod === 'card' && isCardValid) || window.payments.selectedPaymentMethod === 'cash') {
         window.backend.sendFormData(window.utils.showSuccess, window.utils.showError, new FormData(formOrder)); // отправляем данные
         formOrder.reset(); // сбрасываем поля формы
-        document.querySelector('.payment__card-status').textContent = 'не определен'; // возвращаем текст про номер карты
-        document.querySelector('.payment__card-wrap').classList.remove('visually-hidden'); // скрываем вкладку наличные
-        document.querySelector('.payment__cash-wrap').classList.add('visually-hidden'); // выводим вкладку оплата картой
+        cardStatus.textContent = 'не определен'; // возвращаем текст про номер карты
+        paymentCardTab.classList.remove('visually-hidden'); // скрываем вкладку наличные
+        paymentCashTab.classList.add('visually-hidden'); // выводим вкладку оплата картой
       }
     }
   };
@@ -163,10 +171,9 @@
   // экспорт:
   window.busket = {
     renderCardInBusket: function (cardData) {
-      // сохраним в переменные шаблон и карточку
-      var cardTemplate = document.querySelector('#card-order').content.cloneNode(true);
-      var card = cardTemplate.querySelector('.goods_card');
       // заполним поля и аттрибуты картоки данными
+      var cardTemplate = document.querySelector('#card-order').content.cloneNode(true); // шаблон карточки корзины
+      var card = cardTemplate.querySelector('.goods_card'); // сама карточка
       card.setAttribute('id', cardData.id);
       card.querySelector('.card-order__title').textContent = cardData.name;
       card.querySelector('.card-order__img').src = 'img/cards/' + cardData.picture;

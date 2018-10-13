@@ -30,7 +30,7 @@
   var filterFavoriteInput = catalogSidebar.querySelector('#filter-favorite');
   var filterAvailabilityInput = catalogSidebar.querySelector('#filter-availability');
   var rangeFillLine = catalogFilterRange.querySelector('.range__fill-line'); // полоска между пинами
-
+  var goodsCardEmpty = document.querySelector('.goods__card-empty');
   // поиск минимальной цены в каталоге
   var findMinPrice = function (cardsData) {
     var min = cardsData[0].price;
@@ -78,7 +78,7 @@
         var cardInOrder = goodsCards.querySelector('[id="' + id + '"]');
         cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount; // обновим количество товара в карточке корзина
         goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
-        document.querySelector('.goods__card-empty').classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
+        goodsCardEmpty.classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
       }
       busketInHeader.textContent = 'В корзине: ' + window.utils.goodsInOrder.length;
       window.busket.showCostOfGoods();
