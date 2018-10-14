@@ -72,27 +72,6 @@
   };
 
   // вспомогателльная функция для фильтрации, проверяет товар на соответствие по составу
-  // var checkFoodPropertyInFilters = function (item) {
-  //   var isSugerFree = true;
-  //   var isGlutenFree = true;
-  //   var isVegetarian = true;
-  //   activeFilter.foodProperties.forEach(function (foodProperty) {
-  //     switch (foodProperty) {
-  //       case 'sugar-free':
-  //         isSugerFree = !item.nutritionFacts.sugar;
-  //         break;
-  //       case 'gluten-free':
-  //         isGlutenFree = !item.nutritionFacts.gluten;
-  //         break;
-  //       case 'vegetarian':
-  //         isVegetarian = item.nutritionFacts.vegetarian;
-  //         break;
-  //     }
-  //   });
-  //   return isSugerFree && isGlutenFree && isVegetarian;
-  // };
-
-  // вспомогателльная функция для фильтрации, проверяет товар на соответствие по составу
   var checkFoodPropertyInFilters = function (item) {
     var isSugerFree = true;
     var isGlutenFree = true;

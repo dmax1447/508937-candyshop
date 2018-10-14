@@ -31,6 +31,9 @@
   var filterAvailabilityInput = catalogSidebar.querySelector('#filter-availability');
   var rangeFillLine = catalogFilterRange.querySelector('.range__fill-line'); // полоска между пинами
   var goodsCardEmpty = document.querySelector('.goods__card-empty');
+  var foodTypeFilters = filterForm.querySelectorAll('[name="food-type"]');
+  var foodPropertyFilters = filterForm.querySelectorAll('[name="food-property"]');
+
   // поиск минимальной цены в каталоге
   var findMinPrice = function (cardsData) {
     var min = cardsData[0].price;
@@ -89,11 +92,8 @@
       evt.preventDefault();
       btnFavorite.classList.toggle('card__btn-favorite--selected');
       btnFavorite.blur();
-      if (goodsInCatalogItem.isFavorite) {
-        goodsInCatalogItem.isFavorite = false;
-      } else {
-        goodsInCatalogItem.isFavorite = true;
-      }
+      goodsInCatalogItem.isFavorite = !goodsInCatalogItem.isFavorite;
+
     }
   };
 
@@ -117,7 +117,7 @@
     card.querySelector('.card__composition-list').textContent = cardData.nutritionFacts.contents;
     if (cardData.isFavorite) {
       var btnFavorite = card.querySelector('.card__btn-favorite');
-      btnFavorite.classList.toggle('card__btn-favorite--selected');
+      btnFavorite.classList.add('card__btn-favorite--selected');
     }
     card.addEventListener('click', onCatalogCardClick); // добавим обработчик клика на карточку товара
     return card;
@@ -204,25 +204,24 @@
   // обработчик изменений фильтров в форме
   var onFormChange = function (evt) {
     // соберем данные для фильтра
-    if (evt.target === filterFavoriteInput && filterAvailabilityInput.checked) {
+    if (evt.target === filterFavoriteInput) {
       filterAvailabilityInput.checked = false;
     }
-    if (evt.target === filterAvailabilityInput && filterFavoriteInput.checked) {
+    if (evt.target === filterAvailabilityInput) {
       filterFavoriteInput.checked = false;
     }
-    if (evt.target === filterAvailabilityInput || evt.target === filterFavoriteInput) {
-      for (var i = 0; i <= 8; i++) {
-        filterForm[i].checked = false;
-      }
+    if (filterAvailabilityInput.checked || filterFavoriteInput.checked) {
+      foodTypeFilters.forEach(function (input) {
+        input.checked = false;
+      });
+      foodPropertyFilters.forEach(function (input) {
+        input.checked = false;
+      });
       window.utils.disableControls();
       window.filters.minPrice = MIN_PRICE;
       window.filters.maxPrice = MAX_PRICE;
       window.utils.initSlider();
-    }
-    if (filterAvailabilityInput.checked || filterFavoriteInput.checked) {
-      window.utils.disableControls();
-    }
-    if (!filterAvailabilityInput.checked && !filterFavoriteInput.checked) {
+    } else {
       window.utils.enableControls();
     }
     window.utils.debounce(refreshOnFilterChange);
