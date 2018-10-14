@@ -31,35 +31,19 @@
     // функция для подсчета начальных значений счетчиков в блоке фильтров
     initFilterCounters: function (catalogData) {
       var filterCount = {
-        icecream: 0,
-        soda: 0,
-        gum: 0,
-        marmalade: 0,
-        marshmallows: 0,
-        noSugar: 0,
-        vegetarian: 0,
-        noGluten: 0,
-        inFavorite: 0,
-        inStock: 0
+        'Мороженое': 0,
+        'Газировка': 0,
+        'Жевательная резинка': 0,
+        'Мармелад': 0,
+        'Зефир': 0,
+        'noSugar': 0,
+        'vegetarian': 0,
+        'noGluten': 0,
+        'inFavorite': 0,
+        'inStock': 0
       };
       catalogData.forEach(function (item) {
-        switch (item.kind) {
-          case 'Мороженое':
-            filterCount.icecream++;
-            break;
-          case 'Газировка':
-            filterCount.soda++;
-            break;
-          case 'Жевательная резинка':
-            filterCount.gum++;
-            break;
-          case 'Мармелад':
-            filterCount.marmalade++;
-            break;
-          case 'Зефир':
-            filterCount.marshmallows++;
-            break;
-        }
+        filterCount[item.kind]++;
         if (!item.nutritionFacts.sugar) {
           filterCount.noSugar++;
         }
@@ -77,11 +61,11 @@
         }
       });
       var sidebar = document.querySelector('.catalog__sidebar');
-      sidebar.querySelector('label[for="filter-icecream"] + span').textContent = '(' + filterCount.icecream + ')';
-      sidebar.querySelector('label[for="filter-soda"] + span').textContent = '(' + filterCount.soda + ')';
-      sidebar.querySelector('label[for="filter-gum"] + span').textContent = '(' + filterCount.gum + ')';
-      sidebar.querySelector('label[for="filter-marmalade"] + span').textContent = '(' + filterCount.marmalade + ')';
-      sidebar.querySelector('label[for="filter-marshmallows"] + span').textContent = '(' + filterCount.marshmallows + ')';
+      sidebar.querySelector('label[for="filter-icecream"] + span').textContent = '(' + filterCount['Мороженое'] + ')';
+      sidebar.querySelector('label[for="filter-soda"] + span').textContent = '(' + filterCount['Газировка'] + ')';
+      sidebar.querySelector('label[for="filter-gum"] + span').textContent = '(' + filterCount['Жевательная резинка'] + ')';
+      sidebar.querySelector('label[for="filter-marmalade"] + span').textContent = '(' + filterCount['Мармелад'] + ')';
+      sidebar.querySelector('label[for="filter-marshmallows"] + span').textContent = '(' + filterCount['Зефир'] + ')';
       sidebar.querySelector('label[for="filter-sugar-free"] + span').textContent = '(' + filterCount.noSugar + ')';
       sidebar.querySelector('label[for="filter-vegetarian"] + span').textContent = '(' + filterCount.vegetarian + ')';
       sidebar.querySelector('label[for="filter-gluten-free"] + span').textContent = '(' + filterCount.noGluten + ')';
