@@ -103,11 +103,10 @@
     totalCountElement.childNodes[1].textContent = totalPrice + ' ₽';
   };
 
-  // обработчик события "отправить" на форме заказа
   var onFormOrderSubmit = function (evt) {
     evt.preventDefault();
-    // если форма валидка и товар есть в корзине
-    if (formOrder.checkValidity && (window.utils.goodsInOrder.length > 0)) {
+    // если есть товар есть в корзине
+    if (window.utils.goodsInOrder.length > 0) {
       // если выбрана оплата картой и карта верна, или выбрана оплата наличными
       if ((window.payments.selectedPaymentMethod === 'card' && isCardValid) || window.payments.selectedPaymentMethod === 'cash') {
         window.backend.sendFormData(window.utils.showSuccess, window.utils.showError, new FormData(formOrder)); // отправляем данные
