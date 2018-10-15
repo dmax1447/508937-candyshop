@@ -37,22 +37,22 @@
   // поиск минимальной цены в каталоге
   var findMinPrice = function (cardsData) {
     var min = cardsData[0].price;
-    for (var i = 0; i < cardsData.length; i++) {
-      if (cardsData[i].price < min) {
-        min = cardsData[i].price;
+    cardsData.forEach(function (cardData) {
+      if (cardData.price < min) {
+        min = cardData.price;
       }
-    }
+    });
     return min;
   };
 
   // поиск максиальной цены в каталоге
   var findMaxPrice = function (cardsData) {
     var max = cardsData[0].price;
-    for (var i = 0; i < cardsData.length; i++) {
-      if (cardsData[i].price > max) {
-        max = cardsData[i].price;
+    cardsData.forEach(function (cardData) {
+      if (cardData.price > max) {
+        max = cardData.price;
       }
-    }
+    });
     return max;
   };
 
@@ -126,19 +126,19 @@
   // Функция для отрисовки каталога, вернет подгтовленный каталог по входным данным
   var renderCatalog = function (cardsData) {
     var catalogFragment = document.createDocumentFragment(); // создаем пустой фрагмент
-    for (var i = 0; i < cardsData.length; i++) {
-      var card = renderCard(cardsData[i]);
-      catalogFragment.appendChild(card); // вставляем сгенерированный по данным элемент(волшебника) в пустой фрагмент
-    }
+    cardsData.forEach(function (cardData) {
+      var card = renderCard(cardData);
+      catalogFragment.appendChild(card);
+    });
     return catalogFragment; // вернем подготовленный каталог
   };
 
   // функция очистки каталога
   var clearCatalog = function () {
     var cards = document.querySelectorAll('.catalog__card');
-    for (var i = 0; i < cards.length; i++) {
-      catalogCards.removeChild(cards[i]);
-    }
+    cards.forEach(function (card) {
+      catalogCards.removeChild(card);
+    });
     var errorMessage = document.querySelector('.catalog__empty-filter');
     if (errorMessage !== null) {
       catalogCards.removeChild(errorMessage);
@@ -147,10 +147,10 @@
 
   // Коллбек на загрузку списка товаров с сервера
   var onCatalogLoad = function (cardsData) {
-    for (var i = 0; i < cardsData.length; i++) { // обработаем входные данные
-      cardsData[i].id = i; // добавим идентификатор id каждой записи
-      cardsData[i].isFavorite = false; // и поле избранное
-    }
+    cardsData.forEach(function (cardData, i) {
+      cardData.id = i; // добавим идентификатор id каждой записи
+      cardData.isFavorite = false; // и поле избранное
+    });
     window.utils.goodsInCatalog = cardsData.slice(); // сохраним копию данных для дальнейшей работы
     var catalogFragment = renderCatalog(cardsData); // рендерим каталог по полученным данным
     catalogCards.classList.remove('catalog__cards--load'); // у блока catalog__cards уберем класс catalog__cards--load
