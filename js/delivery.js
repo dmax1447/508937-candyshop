@@ -25,6 +25,7 @@
     tehinstitute: 'м.Технологический институт, ул. 1я Красноармейская д.4, оф.12, пароль - "три зеленых свистка"'
   };
 
+
   // обработчик кликов по табам выбора метода доставки
   var onDeliveryBtnsClick = function (evt) {
     var hiddenTab = deliverySection.querySelector('div.visually-hidden');
@@ -33,12 +34,11 @@
       tabDeliverCourier.classList.toggle('visually-hidden');
       (evt.target.id === 'deliver__store' ? fieldsetDilverStores : fieldsetDilverCourier).removeAttribute('disabled');
       (evt.target.id === 'deliver__store' ? fieldsetDilverCourier : fieldsetDilverStores).setAttribute('disabled', '');
-      if (evt.target.id === 'deliver__store') {
-        courierDescription.setAttribute('disabled', '');
-      } else {
-        courierDescription.removeAttribute('disabled');
-      }
+      disableCourierDescription();
     }
+  };
+  var disableCourierDescription = function (tab) {
+    return tab === 'deliver__store' ? courierDescription.setAttribute('disabled', '') : courierDescription.removeAttribute('disabled');
   };
 
   // обработчик выдора магазина для доставки

@@ -19,14 +19,12 @@
   var cardHolderName = paymentSection.querySelector('#payment__cardholder');
   var cardStatus = paymentSection.querySelector('.payment__card-status');
   var cardErrorMessage = paymentSection.querySelector('.payment__error-message');
-
-
   var totalCountElement = document.querySelector('.goods__total-count');
-  //
   var goodsCardsEmpty = document.querySelector('.goods__card-empty'); // блок сообщение пустая корзина
   var goodsTotal = document.querySelector('.goods__total'); // блок общая сумма покупок
   var paymentCardTab = document.querySelector('.payment__card-wrap'); // таб оплата картой
   var paymentCashTab = document.querySelector('.payment__cash-wrap'); // таб оплата налом
+  var cardOrderTemplate = document.querySelector('#card-order');
 
   var cardState = {
     'номер карты': true,
@@ -171,7 +169,7 @@
   window.busket = {
     renderCardInBusket: function (cardData) {
       // заполним поля и аттрибуты картоки данными
-      var cardTemplate = document.querySelector('#card-order').content.cloneNode(true); // шаблон карточки корзины
+      var cardTemplate = cardOrderTemplate.content.cloneNode(true); // шаблон карточки корзины
       var card = cardTemplate.querySelector('.goods_card'); // сама карточка
       card.setAttribute('id', cardData.id);
       card.querySelector('.card-order__title').textContent = cardData.name;

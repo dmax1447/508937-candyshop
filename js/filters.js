@@ -51,17 +51,9 @@
       var itemInCatalog = window.utils.findItemById(item.id, window.utils.goodsInCatalog);
       return itemInCatalog.amount > 0;
     }
-
-    if (activeFilter.foodTypes.length > 0) {
-      isFoodTypeMatch = checkFoodTypeInFilters(item);
-    } else {
-      isFoodTypeMatch = true;
-    }
+    isFoodTypeMatch = activeFilter.foodTypes.length > 0 ? checkFoodTypeInFilters(item) : true;
     isFoodPropertyMatch = checkFoodPropertyInFilters(item);
-
-    if (item.price >= window.filters.minPrice && item.price <= window.filters.maxPrice) {
-      isPriceMatched = true;
-    }
+    isPriceMatched = (item.price >= window.filters.minPrice && item.price <= window.filters.maxPrice);
     return isFoodTypeMatch && isFoodPropertyMatch && isPriceMatched;
   };
 
@@ -90,45 +82,20 @@
 
   // вспомогателльная функция сравнение товаров по цене
   var comapareByPrice = function (item1, item2) {
-    if (item2.price > item1.price) {
-      return 1;
-    }
-    if (item2.price < item1.price) {
-      return -1;
-    } else {
-      return 0;
-    }
+    return item2.price > item1.price ? 1 : -1;
   };
 
   // вспомогателльная функция сравнение товаров по рейтингу
   var comapareByRating = function (item1, item2) {
-    if (item2.rating.value > item1.rating.value) {
-      return 1;
-    }
-    if (item2.rating.value < item1.rating.value) {
-      return -1;
-    }
     if (item2.rating.value === item1.rating.value) {
-      if (item2.rating.number > item1.rating.number) {
-        return 1;
-      }
-      if (item2.rating.number < item1.rating.number) {
-        return -1;
-      }
+      return item2.rating.number > item1.rating.number ? 1 : -1;
     }
-    return 0;
+    return item2.rating.value > item1.rating.value ? 1 : -1;
   };
 
   // вспомогателльная функция сравнение товаров по популярности
   var comapareByPopuarity = function (item1, item2) {
-    if (item2.id < item1.id) {
-      return 1;
-    }
-    if (item2.id > item1.id) {
-      return -1;
-    } else {
-      return 0;
-    }
+    return item2.id < item1.id ? 1 : -1;
   };
 
   // сортировка данных каталога.
@@ -153,7 +120,7 @@
   };
 
   // функция обертка: фильтрует и сортирует входящие данные и возвращат обработанные
-  var filterAndSortCatalog = function (data) {
+  var processData = function (data) {
     getFiltersAndSortOrder();
     return data.filter(filterGoods).sort(sortByFormSelection);
   };
@@ -161,7 +128,7 @@
   window.filters = {
     minPrice: 0,
     maxPrice: 90,
-    filterAndSortCatalog: filterAndSortCatalog
+    processData: processData
   };
 
 })();

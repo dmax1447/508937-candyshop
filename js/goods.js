@@ -33,6 +33,7 @@
   var goodsCardEmpty = document.querySelector('.goods__card-empty');
   var foodTypeFilters = filterForm.querySelectorAll('[name="food-type"]');
   var foodPropertyFilters = filterForm.querySelectorAll('[name="food-property"]');
+  var cardCatalogTemplate = document.querySelector('#card');
 
   // поиск минимальной цены в каталоге
   var findMinPrice = function (cardsData) {
@@ -99,7 +100,7 @@
 
   // отприсовка карточки в каталоге
   var renderCard = function (cardData) {
-    var cardTemplate = document.querySelector('#card').content.cloneNode(true); // находим и сохраняем шаблон
+    var cardTemplate = cardCatalogTemplate.content.cloneNode(true);
     var card = cardTemplate.querySelector('.catalog__card');
     var sugar = cardData.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
     // очищаем карточку
@@ -238,7 +239,7 @@
 
   // функция обновляет каталог, счетчики, данных о фильтрах
   var refreshOnFilterChange = function () {
-    window.utils.goodsFiltered = window.filters.filterAndSortCatalog(window.utils.goodsInCatalog); // прогняем данные через фильтр (согласно состоянию фильтров)
+    window.utils.goodsFiltered = window.filters.processData(window.utils.goodsInCatalog); // прогняем данные через фильтр (согласно состоянию фильтров)
     refreshCatalog(window.utils.goodsFiltered); // отрисовываем карточки заново
     if (window.utils.goodsFiltered.length === 0) { // если фильтры слишком строгие
       showEmptyFilterMessage(); // показываем сообщение
@@ -264,6 +265,5 @@
   rightPin.addEventListener('mousedown', onPinMouseDown); // нажатие кнопки мыши на правый пин
   filterForm.addEventListener('change', onFormChange); // на изменения в форме фильтра
   filterForm.addEventListener('submit', onFormSubmit); // на кнопку показать все в фильтре
-
 
 })();
