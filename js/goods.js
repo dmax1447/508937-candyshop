@@ -63,7 +63,7 @@
     var currentCard = evt.currentTarget; // текущая карточка
     var btnFavorite = currentCard.querySelector('.card__btn-favorite'); // кнопка избранное
     var btnChart = currentCard.querySelector('.card__btn'); // кнопка в корзину
-    var id = parseInt(currentCard.getAttribute('id'), 10); // сохраняем id товара из карточки
+    var id = parseInt(currentCard.getAttribute('cardId'), 10); // сохраняем id товара из карточки
     var goodsInCatalogItem = window.utils.goodsInCatalog[id]; // найдем в каталоге товар соответствующий карточке
     if (evt.target === btnChart) { // если клик по кнопке в корзину
       evt.preventDefault();
@@ -79,8 +79,8 @@
         }
         goodsInOrderItem.orderedAmount++; // увеличим количество товара в объекте в корзине
         goodsInCatalogItem.amount--; // уменьшим количество товара в объекте в каталоге
-        var cardInOrder = goodsCards.querySelector('[id="' + id + '"]');
-        cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount; // обновим количество товара в карточке корзина
+        var cardInOrder = goodsCards.querySelector('[cardId="' + id + '"]');
+        cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount.toString(); // обновим количество товара в карточке корзина
         goodsCards.classList.remove('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
         goodsCardEmpty.classList.add('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
       }
@@ -106,7 +106,7 @@
     // очищаем карточку
     card.querySelector('.stars__rating').classList.remove('stars__rating--five');
     // добавляем данные
-    card.setAttribute('id', cardData.id); // добавим карточке id
+    card.setAttribute('cardId', cardData.id); // добавим карточке id
     card.querySelector('.card__title').textContent = cardData.name;
     card.querySelector('.card__img').src = 'img/cards/' + cardData.picture;
     window.utils.setCardClassAmount(card, cardData.amount);

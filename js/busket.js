@@ -39,10 +39,10 @@
     var orderData = window.utils.goodsInOrder;
     var catalogData = window.utils.goodsInCatalog;
     var currentCard = evt.currentTarget; // карточка по которой кликнул
-    var id = currentCard.getAttribute('id'); // получаем id товара по которуму кликнули
+    var id = currentCard.getAttribute('cardId'); // получаем id товара по которуму кликнули
     var goodsInOrderItem = window.utils.findItemById(id, orderData); // находим объект-товар в массиве-каталоге
     var goodsInCatalogItem = window.utils.findItemById(id, catalogData); // найдем объект-товар в массиве-корзине
-    var catalogCardSelector = '[id="' + id + '"]';
+    var catalogCardSelector = '[cardId="' + id + '"]';
     var catalogCard = catalogCards.querySelector(catalogCardSelector);
     var index = window.utils.goodsInOrder.indexOf(goodsInOrderItem);
     var btnIncrease = currentCard.querySelector('.card-order__btn--increase'); // кнопка +
@@ -76,9 +76,10 @@
 
   // функция обработки клика по кнопке (+) в карточке товара в корзине
   var changeCountOfGoodInCard = function (goodsInOrderItem, goodsInCatalogItem, cardInOrder, value) {
+    var goodCount = cardInOrder.querySelector('input.card-order__count');
     goodsInOrderItem.orderedAmount += value; // увеличим количество товара в объекте в корзине
     goodsInCatalogItem.amount -= value; // уменьшим количество товара в объекте в каталоге
-    cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount;
+    goodCount.value = goodsInOrderItem.orderedAmount.toString();
   };
 
   var deleteCardFromOrder = function (goodsInCatalogItem, goodsInOrderItem, cardInOrder, index) {
@@ -118,7 +119,8 @@
     if (window.utils.goodsInOrder.length > 0) {
       // если выбрана оплата картой и карта верна, или выбрана оплата наличными
       if ((window.payments.selectedPaymentMethod === 'card' && isCardValid) || window.payments.selectedPaymentMethod === 'cash') {
-        window.backend.sendFormData(window.utils.showSuccess, window.utils.showError, new FormData(formOrder)); // отправляем данные
+        var formOrderData = new FormData(formOrder);
+        window.backend.sendFormData(window.utils.showSuccess, window.utils.showError, formOrderData); // отправляем данные
         formOrder.reset(); // сбрасываем поля формы
         cardStatus.textContent = 'не определен'; // возвращаем текст про номер карты
         paymentCardTab.classList.remove('visually-hidden'); // скрываем вкладку наличные
@@ -182,12 +184,13 @@
       // заполним поля и аттрибуты картоки данными
       var cardTemplate = cardOrderTemplate.content.cloneNode(true); // шаблон карточки корзины
       var card = cardTemplate.querySelector('.goods_card'); // сама карточка
-      card.setAttribute('id', cardData.id);
+      card.setAttribute('cardId', cardData.id);
       card.querySelector('.card-order__title').textContent = cardData.name;
       card.querySelector('.card-order__img').src = 'img/cards/' + cardData.picture;
       card.querySelector('.card-order__img').alt = cardData.name;
       card.querySelector('.card-order__price').textContent = cardData.price + ' ₽';
-      card.querySelector('.card-order__count').value = cardData.orderCount;
+      card.querySelector('input.card-order__count').value = cardData.orderedAmount.toString();
+      card.querySelector('input.card-order__count').name = cardData.name;
       // добавим обработчик кликов по карточке
       card.addEventListener('click', onOrderCardClick);
       return card;
