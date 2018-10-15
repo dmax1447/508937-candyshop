@@ -44,36 +44,27 @@
     var goodsInCatalogItem = window.utils.findItemById(id, catalogData); // найдем объект-товар в массиве-корзине
     var catalogCardSelector = '[id="' + id + '"]';
     var catalogCard = catalogCards.querySelector(catalogCardSelector);
-    var index = orderData.indexOf(goodsInOrderItem); // находим индекс объекта-товара в массиве-корзине
+    var index = window.utils.goodsInOrder.indexOf(goodsInOrderItem);
     var btnIncrease = currentCard.querySelector('.card-order__btn--increase'); // кнопка +
     var btnDecrease = currentCard.querySelector('.card-order__btn--decrease'); // кнопка -
     var btnClose = currentCard.querySelector('.card-order__close'); // кнопка Х
-    if (evt.target === btnIncrease && goodsInCatalogItem.amount >= 1) { // если клик по + и товар есть на складе
-      goodsInOrderItem.orderedAmount++; // увеличим количество товара в объекте в корзине
-      goodsInCatalogItem.amount--; // уменьшим количество товара в объекте в каталоге
-      currentCard.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount;
+
+    if (evt.target === btnIncrease && goodsInCatalogItem.amount >= 1) {
+      changeCountOfGoodInCard(goodsInOrderItem, goodsInCatalogItem, currentCard, 1);
     }
-    if (evt.target === btnDecrease) { // если клик по кнопке '-'
-      goodsInOrderItem.orderedAmount--; // убавляем количество товара в заказе
-      goodsInCatalogItem.amount++; // прибавляем количество товара на складе
-      if (goodsInOrderItem.orderedAmount === 0) { // если товара в заказе не осталось
-        goodsCards.removeChild(currentCard); // удаляем карточку из корзины
-        orderData.splice(index, 1); // удаляем объект-товар из массива-корзины
-      } else {
-        currentCard.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount; // иначе обновляем количество в карточке
-      }
+    if (evt.target === btnDecrease) {
+      changeCountOfGoodInCard(goodsInOrderItem, goodsInCatalogItem, currentCard, -1);
     }
     if (evt.target === btnClose) { // если клик по кнопке закрыть
-      goodsInCatalogItem.amount += goodsInOrderItem.orderedAmount; // возвращаем товар на склад
-      goodsCards.removeChild(currentCard); // удаляем карточку товара из корзины
-      orderData.splice(index, 1); // удаляем объект товар из массива корзина
+      deleteCardFromOrder(goodsInCatalogItem, goodsInOrderItem, currentCard, index);
       evt.preventDefault();
     }
+    if (goodsInOrderItem.orderedAmount === 0) { // если товара в заказе не осталось
+      goodsCards.removeChild(currentCard); // удаляем карточку из корзины
+      orderData.splice(index, 1); // удаляем объект-товар из массива-корзины
+    }
     if (orderData.length === 0) { // если после действий в заказе не осталось товаров:
-      goodsCards.classList.add('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
-      goodsCardsEmpty.classList.remove('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
-      busketInHeader.textContent = 'В корзине пусто! '; // сообщение в блок корзины в заголовке
-      goodsTotal.classList.add('visually-hidden'); // скрыть блок суммарной стоимости/количества товара в корзине
+      proceedEmptyBusket();
       disableOrderForm(); // отключить поля формы заказа
     } else { // если после действий в заказе есть товары
       busketInHeader.textContent = 'В корзине: ' + orderData.length; // обновляем блок корзина в заголовке
@@ -81,8 +72,28 @@
       showCostOfGoods(); // включаем и показываем стоимость и количество товара в корхине
     }
     window.utils.setCardClassAmount(catalogCard, goodsInCatalogItem.amount); // выставляем карточке в каталоге класс доступности после операций в корзине
-
   };
+
+  // функция обработки клика по кнопке (+) в карточке товара в корзине
+  var changeCountOfGoodInCard = function (goodsInOrderItem, goodsInCatalogItem, cardInOrder, value) {
+    goodsInOrderItem.orderedAmount += value; // увеличим количество товара в объекте в корзине
+    goodsInCatalogItem.amount -= value; // уменьшим количество товара в объекте в каталоге
+    cardInOrder.querySelector('.card-order__count').value = goodsInOrderItem.orderedAmount;
+  };
+
+  var deleteCardFromOrder = function (goodsInCatalogItem, goodsInOrderItem, cardInOrder, index) {
+    goodsInCatalogItem.amount += goodsInOrderItem.orderedAmount;
+    goodsCards.removeChild(cardInOrder);
+    window.utils.goodsInOrder.splice(index, 1);
+  };
+
+  var proceedEmptyBusket = function () {
+    goodsCards.classList.add('goods__cards--empty'); // удалим у блока товары в корзине goods__cards класс goods__cards--empty
+    goodsCardsEmpty.classList.remove('visually-hidden'); // скроем блок goods__card-empty добавив ему класс visually-hidden
+    busketInHeader.textContent = 'В корзине пусто! '; // сообщение в блок корзины в заголовке
+    goodsTotal.classList.add('visually-hidden'); // скрыть блок суммарной стоимости/количества товара в корзине
+  };
+
   // функция суммарную стоимость товаров в корзине
   var calculateCost = function (orderData) {
     var totalCost = 0;
